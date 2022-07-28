@@ -34,7 +34,7 @@ http://tdms-srv-virt:444/api
 --------------------------------------------------------------------------------------------------------------------
 Все запросы авторизуются с помощью `access_token`, который необходимо добавить в `headers`. 
 
-```json
+```
 Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..etmTl5Im6-yxCVhjgP5Ajw.-iuDNbbDtq289WBAHg56PPlq4-dMqsx6YTOFoVbjNc1wHEHcXQwj-uDTr-KnnujSq8S8DBgMtxx7WCbFzwtpRYlr_VprBbiGt1IvcGvaHU0_paGFfl8hqp0sH-dOC_IjWoNq0JzibpXQrTBWDBDYbCyREY0dsHd4RRZhduG5qK_48MPx3VVv6UBeFH6KqS5kKWlkk0uek8LJaeRKxldDmJBC1mry99Epx8-E-mLHn2MBcGiplYTpqsU93B4fLQtfwqFc6siNSkwj6jP-xK8jgNPKBBdxNQUqlo_dzX4hC5odeD2ZZZ71CdrM7zRuJxXv3NRpx8EWQwSSVfue8H28Ez-wdpprEsJjhRZc6Fe-IAtLkCHEAo8bTCSbiSGwv-iWj9dzfCF2N8ZWObViTbRkDTElyEqQBnmWwwW8F2IFHgiKm-8OhJPjuzkpFXHxmyQKtn3cmpOHwVhG-ReK6sogoVNo4ipC7DoAUnUU_sLgw-h9ybtIaSenk8kmHQMTyD1lVP-HBM8vEVd3PZiKF-SFwvbTgbFfR1c3cpuFu1SRbUesN7xYZ_zI5OrqL8xQ3x0nGbN2U5n8gH_-uEMcGr6yT-d4rdgKuN3hiZ8YMTnZsoIFZcD8pUoi2aQVf4YLl9C4.93DwkSd8A2kYo1verZcV363GPwhBycjwDd9Pw2VAkws
 ```
 
@@ -192,8 +192,9 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 Представляет параметр функции указанной в `submode`
 ```json
 {
-    "Sysname": "ATTR_NAME",
-    "Value": "Сооружение жилого типа",
+    "Name": "i",
+    "Type": "int",
+    "Value": "123"
 }
 ```
 |Parameter |Type  |Required|Description
