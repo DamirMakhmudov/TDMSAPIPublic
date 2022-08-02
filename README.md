@@ -23,11 +23,13 @@
 Для развертывания решения необходимо скачать репозиторий, нажав на `Download ZIP`:
 
 ![download repository!](./assets/001.png)
-Далее разархивировать архив и скопировать в составе репозитория папку `TDMSAPI` и поместиь ее в папку `Extensions` в пути установки `TDMS Application Server`
+Далее разархивировать архив и скопировать в составе репозитория папку `TDMSAPI` и поместить ее в папку `Extensions` в пути установки `TDMS Application Server`
 >C:\Program Files (x86)\CSoft\TDMS Server 6.1\Extensions
 
 Затем в приложении `TDMS Конфигуратор` (в составе `TDMS Application Server`) во вкладке `Модули` включить модуль `TDMSAPI`:
 ![download repository!](./assets/002.png)
+
+Далее необходимо принять изменения и запустить сервер
 
 ## Обзор
 
