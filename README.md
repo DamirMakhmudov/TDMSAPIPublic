@@ -11,6 +11,7 @@
     - [TAttribute](#TAttribute)
     - [JParam](#JParam)
     - [JAPIEventFilter](#JAPIEventFilter)
+- [Получение объекта](#Getobject-post)
 - [Создание объекта](#Createobject-post)
 - [Изменение объекта](#Editobject-post)
 - [Выполнение exetrn функции](#ExecuteFunc-post)
