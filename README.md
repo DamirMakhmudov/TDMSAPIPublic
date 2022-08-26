@@ -9,8 +9,8 @@
     - [TObject](#TObject)
     - [TUser](#TUser)
     - [TAttribute](#TAttribute)
-    - [JParam](#JParam)
-    - [JAPIEventFilter](#JAPIEventFilter)
+    - [Parameters](#Parameters)
+    - [APIEventFilters](#APIEventFilters)
 - [Получение объекта](#Getobject-post)
 - [Создание объекта](#Createobject-post)
 - [Изменение объекта](#Editobject-post)
@@ -80,28 +80,30 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 ```
 
 ## Request body
-Ниже представлено тело `POST` запроса. Оно содержит параметры требуемые для метода API, указанного в параметре `mode` 
+Ниже представлено тело `POST` запроса. Оно содержит параметры требуемые для метода API, указанного в параметре `Mode` 
 
 ```json
 {
-    "mode": "",
+    "Mode": "",
     "TObject": {},
     "TUser": {},
+    "Submode": "",
     "Parameters": [],
     "APIEventFilters": []
 }
 ```
+
 |Parameter      |Type                               |Description
 |-              |-                                  |-               
-|mode           |string                             |Вызываемый метод API
+|Mode           |string                             |Вызываемый метод API
 |TObject        |[TObject](#TObject)                |Описание объекта TDMS
 |TUser          |[TUser](#TUser)                    |Описание пользователя TDMS
-|Submode        |string                             |Задает именованные параметры submode
+|Submode        |string                             |Задает именованные параметры Submode
 |Parameters     |[JParam](#JParam)                  |Задает имя пользовательского метода в конфигурации, который необходимо выпонить
 |APIEventFilters|[JAPIEventFilter](#JAPIEventFilter)|Задает фильтры для получения специальных событий
 
 ### `TObject`
-Объект `TObject` иллюстрирует информационный объект TDMS. С его помощью передаются свойства, атрибуты и состояния последнего. Также используется в ответах на запросы
+Параметр `TObject` иллюстрирует информационный объект TDMS. С его помощью передаются свойства, атрибуты, версии и состояния последнего. Также используется в ответах на запросы
 
 ```json
 {
@@ -117,16 +119,58 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "VersionDescription": "Выдано на экспертизу",
     "VersionName": "1",
     "VersionCreateTime": "12.02.2021 12:48:48",
-    "jAttributes":[
-        {"SysName": "A_Int_DocVersion", "Value":2, "Type": "tdmString"},
-        {"SysName": "A_Real_SheetLength", "Value":1.22, "Type": "tdmReal"},
-        {"SysName": "A_User_Author", "Value":"USER_ABA3440A_0B0C_40AD_A329_D85B5FBABFFE", "Type": "tdmUserLink"},
-        {"SysName": "A_Str_Answer", "Value":"Some answer", "Type": "tdmString"},
-        {"SysName": "A_Str_Designation", "Value":"777", "Type": "tdmString"},
-        {"SysName": "A_Ref_Project", "Value":"{F164E1BB-A204-4996-9A2D-799B65B0D15E}", "Type": "tdmObjectLink"}
+    "TAttributes":[
+        {
+            "SysName": "A_Int_DocVersion",
+            "Value":2,
+            "Type": "tdmString"
+        },
+        {
+            "SysName": "A_Real_SheetLength",
+            "Value":1.22,
+            "Type": "tdmReal"
+        },
+        {
+            "SysName": "A_User_Author",
+            "Value":"USER_ABA3440A_0B0C_40AD_A329_D85B5FBABFFE",
+            "Type": "tdmUserLink"
+        },
+        {
+            "SysName": "A_Str_Answer",
+            "Value":"Some answer", 
+            "Type": "tdmString"
+        },
+        {
+            "SysName": "A_Str_Designation",
+            "Value":"777",
+            "Type": "tdmString"
+        },
+        {
+            "SysName": "A_Ref_Project",
+            "Value":"{F164E1BB-A204-4996-9A2D-799B65B0D15E}",
+            "Type": "tdmObjectLink"
+        }
+    ],
+     "TVersions": [
+        {
+          "VersionDescription": "По замечаниям экспертизы",
+          "VersionName": "10",
+          "GUID": "{48A0871D-1BD2-4F72-B04B-C6185818A411}"
+        },
+        {
+          "VersionDescription": "РИ \u2116254-21 от 12.10.2021",
+          "VersionName": "Изм.8",
+          "GUID": "{1A0DAEC2-60C5-4409-89F9-7D81381BB423}"
+        },
+        {
+          "VersionDescription": "Согласно требованиям от 29.08",
+          "VersionName": "1",
+          "GUID": "{23DEDAC8-A351-438D-A02A-FB5CF2B50C03}"
+        }
     ]
 }
 ```
+
 |Parameter         |Type                       |Read only|Description
 |-                 |-                          |-        |-               
 |GUID              |string                     |true     |Идентификатор объекта TDMS
@@ -141,20 +185,42 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |VersionDescription|string                     |         |Описание версии объекта TDMS
 |VersionName       |string                     |         |Имя версии объекта TDMS
 |VersionCreateTime |string                     |         |Дата создания версии объекта TDMS
-|jAttributes       |[[TAttribute](#TAttribute)]|         |Массив атрибутов объекта TDMS
+|TAttributes       |[[TAttribute](#TAttribute)]|true     |Коллеция атрибутов объекта TDMS
+|TVersions         |[[TVersion](#TAttribute)]  |true     |Коллеция версий объекта TDMS
 
 ### `TAttribute`
-Экземпляр атрибута объекта TDMS. Как правило входит в коллекцию атрибутов `JAttributes`
+Атрибут объекта TDMS. Как правило входит в коллекцию атрибутов `TAttributes`
+
 ```json
 {
     "Sysname": "ATTR_NAME",
     "Value": "Сооружение жилого типа",
+    "Type": "tdmString"
 }
 ```
-|Parameter|Type  |Required|Description
-|-        |-     |-       |-               
-|Sysname  |string|true    |системное имя атрибута
-|Value    |string|true    |значение атрибута
+
+|Parameter|Type  |Description
+|-        |-     |-               
+|Sysname  |string|Cистемное имя атрибута
+|Value    |string|Значение атрибута
+|Type     |string|Тип атрибута
+
+### `TVersion`
+Версия объекта TDMS. Как правило входит в коллекцию версий `TVersions`
+
+```json
+{
+    "VersionDescription": "Согласно замечаниям экспертизы",
+    "VersionName": 2",
+    "GUID": "{91C40073-340A-43B4-9EC1-43A3A9BB8512}"
+}
+```
+
+|Parameter         |Type  |Description
+|-                 |-     |-               
+|VersionDescription|string|Cистемное имя атрибута
+|VersionName       |string|Значение атрибута
+|GUID              |string|Идентификатор версии. При условии, что на типе объекта включено свойство "Ссылки указывают на версию". В этом случае у всех версий существует уникальный для каждой версии GUID наряду с общим GUID
 
 ### `TUser`
 Описывает пользователя TDMS. Также используется в ответах на запросы
@@ -173,7 +239,6 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "Position": "NODE_F6FFCDF6_6F8F_423A_81FA_68693B2B5218"
     "Department": "NODE_B21A1E89_B7D8_4A56_BB54_99E1F6C84283"
 }
-
 ```
 
 |Parameter      |Type  |Read only|Description
@@ -190,7 +255,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Position       |string|         |Занимаемая должность
 |Department     |string|         |Подразделение (отдел), в состав которого включен пользователь
 
-### `JParam`
+### `Parameters`
 Представляет параметр функции указанной в `submode`
 ```json
 {
@@ -199,33 +264,131 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "Value": "123"
 }
 ```
+
 |Parameter |Type  |Required|Description
 |-         |-     |-       |-               
 |Name      |string|true    |Имя параметра в соответствии с декларацией метода
 |Type      |string|        |Тип параметра, в который должна быть произведена конвертация перед вызовом метода. Указывается только в том случае, если декларация метода не содержит явного указания типа (например в vbs). Если тип не указан ни в декларации метода ни в этом поле, подразумевается тип string.
 |Value     |string|true    |Строковое представление значения параметра (корректно конвертируемое в указанный type)
 
-### `JAPIEventFilter`
+### `APIEventFilters`
 Возвращать события начиная с этой временной точки (включая ее) (UTC)
+
 ```json
 {
     "Sysname": "ATTR_NAME",
     "Value": "Сооружение жилого типа",
 }
 ```
+
 |Parameter |Type    |Required|Description
 |-         |-       |-       |-               
 |From      |DateTime|        |Возвращать события начиная с этой временной точки (включая ее) (UTC)
 |Before    |DateTime|        |Возвращать события начиная до этой временной точки (не включая ее) (UTC)
 |Type      |string  |true    |Возвращать события данного типа
 
+
+
+## Getobject `POST`
+Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
+
+### Request:
+
+```json
+{
+    "Mode": "Getobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Getobject - вызываемый метод API
+|TObject     |[TObject](#TObject)|объект TDMS
+|TObject.GUID|string             |идентификатор объекта TDMS
+
+### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Статус успешно выполненного запроса:
+
+```
+ok
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+## Getversionbydescription `POST`
+Получение версий объекта TDMS по описанию версии объекта [TObject](#TObject)
+
+### Request:
+
+```json
+{
+    "Mode": "Getversionbydescription",
+    "TObject": {
+        "GUID": "{91C40073-340A-43B4-9EC1-43A3A9BB8512}",
+        "VersionDescription": "hello"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter                 |Type               |Description
+|-                         |-                  |-               
+|Mode                      |string             |Getversionbydescription - вызываемый метод API
+|TObject                   |[TObject](#TObject)|Объект TDMS
+|TObject.GUID              |string             |Идентификатор объекта TDMS, вреди версий которого осуществляется поиск
+|TObject.VersionDescription|string             |Описание версии объекта TDMS
+
+### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Статус успешно выполненного запроса:
+
+```
+ok
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
 ## Createobject `POST`
 Создание объекта TDMS. Объект может быть создан как в составе указанного родителя `parent`, так и не имея родителя. Не все свойства объекта TDMS могут быть изменены
 
 ### Request:
-```json
+```
 Content-Type: application/json
 ```
+
 ```json
 {
     "mode": "CreateUser",
@@ -234,7 +397,7 @@ Content-Type: application/json
         "Description": "Hello",
         "Parent": "{58B5507B-2E39-48E2-901F-882DD5676783}",
         "StatusName": "S_DocClaim_Actual",
-        "jAttributes":[
+        "TAttributes":[
             {"SysName": "A_Int_DocVersion", "Value":2},
             {"SysName": "A_Str_Answer", "Value":"Some answer"},
             {"SysName": "A_Str_Designation", "Value":"777"},
@@ -286,7 +449,7 @@ GUID созданного объекта TDMS:
         "Description": "Новое описание",
         "GUID": "{5689EAE5-41EF-4D5A-9BF7-487640B5E873}",
         "StatusName": "S_DocClaim_Actual",
-        "jAttributes":[
+        "TAttributes":[
             {"SysName": "A_Int_DocVersion", "Value":2},
             {"SysName": "A_Str_Answer", "Value":"Some answer"},
             {"SysName": "A_Str_Designation", "Value":"777"},
@@ -326,53 +489,7 @@ ok
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-## Getobject `POST`
-Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
-
-### Request:
-
-```json
-{
-    "mode": "Getobject",
-    "TObject": {
-        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
-    }
-}
-```
-
-Обязательные параметры:
-
-|Parameter   |Type               |Description
-|-           |-                  |-               
-|mode        |string             |Editоbject - вызываемый метод API
-|TObject     |[TObject](#TObject)|объект TDMS
-|TObject.GUID|string             |идентификатор объекта TDMS
-
-### Response
-
-```
-Status: 200
-Content-Type: text/plain; charset=UTF-8
-```
-
-Статус успешно выполненного запроса:
-
-```
-ok
-```
-
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
 ## Createuser `POST`
---------------------------------------------------------------------------------------------------------------------
 Создание пользователя TDMS. Возвращает системное имя пользователя. Логин пользователя генерится автоматически по правилу:
 `{Lastname}{Firstname}`
 
@@ -395,6 +512,7 @@ Content-Type: application/json
     }
 }
 ```
+
 Обязательные параметры:
 
 |Parameter          |Type            |Description
@@ -408,14 +526,12 @@ Content-Type: application/json
 |user.Mail          |string          |
 
 ### Response
-
 ```
 Status: 200
 Content-Type: text/plain; charset=UTF-8
 ```
 
 Системное имя пользовател TDMS:
-
 ```
 USER_5CC201F2_3306_4A92_A2D1_65FAD0E25916
 ```
@@ -429,16 +545,14 @@ USER_5CC201F2_3306_4A92_A2D1_65FAD0E25916
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
----
-
 ## UpdateUser `POST`
-
 Updates attributes for existing TDMS User
 
 ### Request:
 ```
 Content-Type: application/json
 ```
+
 ```json
 {
     "mode": "UpdateUser",
@@ -500,9 +614,10 @@ ok
 Исключения, возникающие при вызове, генерируют ошибку HTTP. Превышение времени ожидания генерирует ошибку HTTP. 
 
 ### Request:
-```json
+```
 Content-Type: application/json
 ```
+
 ```json
 {
   "Mode": "ExecuteFunc",
@@ -530,7 +645,6 @@ Content-Type: application/json
 |Parameters |[[JParam](#JParam)]|Задает именованные параметры submode
 
 ### Response
-
 ```
 Status: 200
 Content-Type: application/json
@@ -558,9 +672,10 @@ Content-Type: application/json
 Для каждого стандартного события возвращается тип, идентифицируемый типом стандартного события, время наступления, описание события и обязательный один прикрепленный объект TDMS заданного типа
 
 ### Request:
-```json
+```
 Content-Type: application/json
 ```
+
 ```json
 {
   "Mode": "GetAPIEvents",
@@ -585,7 +700,6 @@ Content-Type: application/json
 |APIEventFilters |[[JAPIEventFilter](#JAPIEventFilter)]|Задает фильтры для получения специальных событий
 
 ### Response
-
 ```
 Status: 200
 Content-Type: application/json
