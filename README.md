@@ -12,6 +12,7 @@
     - [Parameters](#Parameters)
     - [APIEventFilters](#APIEventFilters)
 - [Получение объекта](#Getobject-post)
+- [Получение версии объекта по описанию версии](#Getversionbydescription-post)
 - [Создание объекта](#Createobject-post)
 - [Изменение объекта](#Editobject-post)
 - [Выполнение exetrn функции](#ExecuteFunc-post)
