@@ -7,14 +7,22 @@
 - [Авторизация](#Авторизация)
 - [Request body](#Request-body)
     - [TObject](#TObject)
-    - [TUser](#TUser)
+    - [TObjectDef](#TObjectDef)
+    - [TStatus](#TStatus)
+    - [TFileDef](#TFileDef)
     - [TAttribute](#TAttribute)
+    - [TShortObject](#TShortObject)
+    - [TVersion](#TVersion)
+    - [TUser](#TUser)
     - [Parameters](#Parameters)
     - [APIEventFilters](#APIEventFilters)
 - [Получение объекта](#Getobject-post)
+- [Получение состава объекта](#Getobjectcontent-post)
+- [Получение типа объекта](#Getobjectdef-post)
 - [Получение версии объекта по описанию версии](#Getversionbydescription-post)
 - [Создание объекта](#Createobject-post)
 - [Изменение объекта](#Editobject-post)
+- [Удаление объекта](#Deleteobject-post)
 - [Выполнение exetrn функции](#ExecuteFunc-post)
 - [Получение событий](#GetAPIEvents-post)
 
@@ -90,7 +98,8 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "TUser": {},
     "Submode": "",
     "Parameters": [],
-    "APIEventFilters": []
+    "APIEventFilters": [],
+    "TFlag": ""
 }
 ```
 
@@ -188,6 +197,128 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |VersionCreateTime |string                     |         |Дата создания версии объекта TDMS
 |TAttributes       |[[TAttribute](#TAttribute)]|true     |Коллеция атрибутов объекта TDMS
 |TVersions         |[[TVersion](#TAttribute)]  |true     |Коллеция версий объекта TDMS
+|TContent          |[[TVersion](#TAttribute)]  |true     |Состав объекта TDMS
+
+### `TObjectDef`
+Описание типа объекта TDMS
+
+```json
+{
+  "FileDefs": [
+    {
+      "Description": "Текстовый документ",
+      "Sysname": "FILE_DOC",
+      "Extensions": "*.doc, *.docx, *.rtf, *.odt, *.txt"
+    },
+    {
+      "Description": "Электронная таблица",
+      "Sysname": "FILE_XLS",
+      "Extensions": "*.xls, *.xlsx, *.csv, *.ods"
+    },
+    {
+      "Description": "Публикация",
+      "Sysname": "FILE_PDF_PUBL",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Документ Adobe Acrobat",
+      "Sysname": "FILE_AA_PDF",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Подлинник",
+      "Sysname": "FILE_PDF_ORIG",
+      "Extensions": "*.pdf, tif, *.tiff"
+    },
+    {
+      "Description": "Исходные данные для расчета",
+      "Sysname": "FILE_DLG",
+      "Extensions": "*.dlg, *.dlf"
+    },
+    {
+      "Description": "Файл ЭЦП",
+      "Sysname": "FILE_SIG",
+      "Extensions": "*.sig, *.sgn"
+    },
+    {
+      "Description": "Чертеж CAD",
+      "Sysname": "FILE_DWG",
+      "Extensions": "*.dwg, *.dxf, *.dwf, *.dgn"
+    }
+  ],
+  "Statuses": [
+    {
+      "Description": "Недействующий (Документ)",
+      "SysName": "S_Doc_Cancel"
+    },
+    {
+      "Description": "В разработке (Документ)",
+      "SysName": "S_Doc_Developing"
+    },
+    {
+      "Description": "Разработан (Документ)",
+      "SysName": "S_Doc_Developed"
+    },
+    {
+      "Description": "На согласовании (Документ)",
+      "SysName": "S_Doc_Agreement"
+    },
+    {
+      "Description": "Проверка в архиве (Документ)",
+      "SysName": "S_Doc_ArchCheck"
+    },
+    {
+      "Description": "Действующий (Документ)",
+      "SysName": "S_Doc_Archived"
+    },
+    {
+      "Description": "Действующий на изменении (Документ)",
+      "SysName": "S_Doc_Changing"
+    },
+    {
+      "Description": "Аннулирован (Документ)",
+      "SysName": "S_Doc_Annulled"
+    }
+  ]
+}
+```
+
+|Parameter|Type                   |Description
+|-        |-                      |-               
+|Statuses |[[TStatus](#TStatus)]  |Коллекция возможных статусов объектов данного типа
+|FileDefs |[[TFileDef](#TFileDef)]|Типы файлов, разрешенные к добавлению к объектам этого типа
+
+### `TStatus`
+Схема описания статуса объекта
+
+```json
+{
+    "Description": "Недействующий (Документ)",
+    "SysName": "S_Doc_Cancel"
+}
+```
+
+|Parameter  |Type  |Description
+|-          |-     |-               
+|Description|string|Описание статуса
+|SysName    |string|Системное имя статуса
+
+### `TFileDef`
+Тип файла TDMS
+
+```json
+{
+    "Description": "Текстовый документ",
+    "Sysname": "FILE_DOC",
+    "Extensions": "*.doc, *.docx, *.rtf, *.odt, *.txt"
+}
+```
+
+|Parameter  |Type  |Description
+|-          |-     |-               
+|Description|string|Описание типа файла
+|SysName    |string|Системное имя типа файла
+|Extensions |string|Возможные расширения файлов данного типа
 
 ### `TAttribute`
 Атрибут объекта TDMS. Как правило входит в коллекцию атрибутов `TAttributes`
@@ -205,6 +336,23 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Sysname  |string|Cистемное имя атрибута
 |Value    |string|Значение атрибута
 |Type     |string|Тип атрибута
+
+### `TShortObject`
+Короткое описание объекта TDMS. Используется, как правило, для передачи коллекции объектов
+
+```json
+{
+    "Description": "Структура комплекса",
+    "GUID": "{28ECF8F2-0124-41EA-B37F-CED9190146CC}",
+    "ObjectDefName": "O_Folder_Complex_Structure"
+}
+```
+
+|Parameter    |Type  |Description
+|-            |-     |-               
+|Description  |string|Описание объекта
+|GUID         |string|Идентификатор объекта
+|ObjectDefName|string|Тип объекта
 
 ### `TVersion`
 Версия объекта TDMS. Как правило входит в коллекцию версий `TVersions`
@@ -288,8 +436,6 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Before    |DateTime|        |Возвращать события начиная до этой временной точки (не включая ее) (UTC)
 |Type      |string  |true    |Возвращать события данного типа
 
-
-
 ## Getobject `POST`
 Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
 
@@ -309,22 +455,285 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Parameter   |Type               |Description
 |-           |-                  |-               
 |Mode        |string             |Getobject - вызываемый метод API
-|TObject     |[TObject](#TObject)|объект TDMS
-|TObject.GUID|string             |идентификатор объекта TDMS
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
 
 ### Response
 
 ```
 Status: 200
-Content-Type: text/plain; charset=UTF-8
+Content-Type: application/json
 ```
 
-Статус успешно выполненного запроса:
+```json
+{
+  "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
+  "ObjectGuid": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
+  "ObjectDefName": "O_Complex",
+  "Description": "3333 Ухта комплекс",
+  "Parent": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
+  "StatusName": "",
+  "ModifyTime": "26.07.2022 15:17:02",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": "Начальная версия",
+  "VersionName": "1",
+  "VersionCreateTime": "25.11.2020 11:14:02",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "3333",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "Ухта комплекс",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Ref_ComplexType",
+      "Value": "{41499C6A-4105-4C00-AC35-E832D51A51CB}",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_GUID_External",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_CodeCmplx",
+      "Value": "0203.001.001",
+      "Type": "tdmString"
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": "Начальная версия",
+      "VersionName": "1",
+      "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}"
+    }
+  ],
+  "TContent": null
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+## Getobjectcontent `POST`
+Получение состава объекта TDMS по GUID указанном в [TObject](#TObject)
+
+### Request:
+
+```json
+{
+    "Mode": "Getobjectcontent",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+### Response
 
 ```
-ok
+Status: 200
+Content-Type: application/json
 ```
 
+```json
+{
+  "TContent": [
+    {
+      "Description": "Структура комплекса",
+      "GUID": "{28ECF8F2-0124-41EA-B37F-CED9190146CC}",
+      "ObjectDefName": "O_Folder_Complex_Structure"
+    },
+    {
+      "Description": "Общая информация",
+      "GUID": "{B05A7F23-5597-45DD-A7E8-C8CAE3B28149}",
+      "ObjectDefName": "O_Folder_Doc"
+    },
+    {
+      "Description": "0203.001.001 - 1-Й ЭТАП (ВОСТОЧНЫЙ КОРИДОР), ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ОБЪЕМЕ ДО 63 МЛРД.М3/ГОД Этап 2.1. Линейная часть. Участок «Починки-Анапа», км 0 –км 347,5 (км 0 – км 181, км 181 – км 295,7, км 295,7 – км 347,5)",
+      "GUID": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
+      "ObjectDefName": "O_Project"
+    }
+  ]
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+## Getobjectdef `POST`
+Получение информации о типе объекта TDMS по идентификатору, указанному в [TObject](#TObject)
+
+### Request:
+
+```json
+{
+    "mode": "Getobjectdef",
+    "TObject": {
+        "ObjectDefName": "O_PDoc"
+    }
+} 
+```
+
+Обязательные параметры:
+
+|Parameter            |Type               |Description
+|-                    |-                  |-               
+|Mode                 |string             |Вызываемый метод API
+|TObject              |[TObject](#TObject)|Объект TDMS
+|TObject.ObjectDefName|string             |Идентификатор типа объекта
+
+### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+Тело запроса: 
+
+```json
+{
+  "FileDefs": [
+    {
+      "Description": "Текстовый документ",
+      "Sysname": "FILE_DOC",
+      "Extensions": "*.doc, *.docx, *.rtf, *.odt, *.txt"
+    },
+    {
+      "Description": "Электронная таблица",
+      "Sysname": "FILE_XLS",
+      "Extensions": "*.xls, *.xlsx, *.csv, *.ods"
+    },
+    {
+      "Description": "Публикация",
+      "Sysname": "FILE_PDF_PUBL",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Документ Adobe Acrobat",
+      "Sysname": "FILE_AA_PDF",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Подлинник",
+      "Sysname": "FILE_PDF_ORIG",
+      "Extensions": "*.pdf, tif, *.tiff"
+    },
+    {
+      "Description": "Исходные данные для расчета",
+      "Sysname": "FILE_DLG",
+      "Extensions": "*.dlg, *.dlf"
+    },
+    {
+      "Description": "Файл ЭЦП",
+      "Sysname": "FILE_SIG",
+      "Extensions": "*.sig, *.sgn"
+    },
+    {
+      "Description": "Чертеж CAD",
+      "Sysname": "FILE_DWG",
+      "Extensions": "*.dwg, *.dxf, *.dwf, *.dgn"
+    }
+  ],
+  "Statuses": [
+    {
+      "Description": "Недействующий (Документ)",
+      "SysName": "S_Doc_Cancel"
+    },
+    {
+      "Description": "В разработке (Документ)",
+      "SysName": "S_Doc_Developing"
+    },
+    {
+      "Description": "Разработан (Документ)",
+      "SysName": "S_Doc_Developed"
+    },
+    {
+      "Description": "На согласовании (Документ)",
+      "SysName": "S_Doc_Agreement"
+    },
+    {
+      "Description": "Проверка в архиве (Документ)",
+      "SysName": "S_Doc_ArchCheck"
+    },
+    {
+      "Description": "Действующий (Документ)",
+      "SysName": "S_Doc_Archived"
+    },
+    {
+      "Description": "Действующий на изменении (Документ)",
+      "SysName": "S_Doc_Changing"
+    },
+    {
+      "Description": "Аннулирован (Документ)",
+      "SysName": "S_Doc_Annulled"
+    }
+  ]
+}
+```
 Ошибки:
 
 |Error code    |Description
@@ -420,12 +829,206 @@ Content-Type: application/json
 
 ```
 Status: 200
-Content-Type: text/plain; charset=UTF-8
+Content-Type: application/json
 ```
 
-GUID созданного объекта TDMS:
-```
-{USER_5CC201F2_3306_4A92_A2D1_65FAD0E25916}
+Тело ответа:
+
+```json
+{
+  "GUID": "{586C55CA-DDAB-4575-91E3-ADCE5B86D03C}",
+  "ObjectGuid": "{586C55CA-DDAB-4575-91E3-ADCE5B86D03C}",
+  "ObjectDefName": "O_PDoc",
+  "Description": "Hello",
+  "Parent": "{48A0871D-1BD2-4F72-B04B-C6185818A411}",
+  "StatusName": "S_Doc_Developing",
+  "ModifyTime": "21.09.2022 15:37:26",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": "Начальная версия",
+  "VersionName": "0",
+  "VersionCreateTime": "21.09.2022 15:37:26",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Int_AttachDocNum",
+      "Value": "",
+      "Type": "tdmInteger"
+    },
+    {
+      "SysName": "A_Cls_TypeDoc",
+      "Value": "",
+      "Type": "tdmClassifier"
+    },
+    {
+      "SysName": "A_Int_ChangeNum",
+      "Value": 13,
+      "Type": "tdmInteger"
+    },
+    {
+      "SysName": "A_List_Change",
+      "Value": "",
+      "Type": "tdmList"
+    },
+    {
+      "SysName": "A_Date_AcceptEA",
+      "Value": "",
+      "Type": "tdmDate"
+    },
+    {
+      "SysName": "A_Date_AcceptTA",
+      "Value": "",
+      "Type": "tdmDate"
+    },
+    {
+      "SysName": "A_Date_Begin",
+      "Value": "",
+      "Type": "tdmDate"
+    },
+    {
+      "SysName": "A_Date_End",
+      "Value": "",
+      "Type": "tdmDate"
+    },
+    {
+      "SysName": "A_Ref_TypeAttachDoc",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "Test object",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_User_Author",
+      "Value": "",
+      "Type": "tdmUserLink"
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "A_Str_Note answersss",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_PagesNum",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Int_PagesCount",
+      "Value": "",
+      "Type": "tdmInteger"
+    },
+    {
+      "SysName": "A_Int_A4Count",
+      "Value": "",
+      "Type": "tdmInteger"
+    },
+    {
+      "SysName": "A_Table_Formats",
+      "Value": "",
+      "Type": "tdmTable"
+    },
+    {
+      "SysName": "A_Ref_Project",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Table_OrderChanges",
+      "Value": "",
+      "Type": "tdmTable"
+    },
+    {
+      "SysName": "A_Ref_Changes_Set",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Ref_OrderChange",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_Barcode",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Ref_Organization",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_ShFormats",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Ref_Dept",
+      "Value": "",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_Designation_Customer",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Date_Begin_Fact",
+      "Value": "",
+      "Type": "tdmDate"
+    },
+    {
+      "SysName": "A_Date_End_Fact",
+      "Value": "",
+      "Type": "tdmDate"
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": "Начальная версия",
+      "VersionName": "0",
+      "GUID": "{586C55CA-DDAB-4575-91E3-ADCE5B86D03C}"
+    }
+  ],
+  "TContent": null
+}
 ```
 
 Ошибки:
@@ -465,8 +1068,8 @@ GUID созданного объекта TDMS:
 |Parameter   |Type               |Description
 |-           |-                  |-               
 |mode        |string             |Editоbject - вызываемый метод API
-|TObject     |[TObject](#TObject)|объект TDMS
-|TObject.GUID|string             |идентификатор объекта TDMS
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
 
 ### Response
 
@@ -489,6 +1092,54 @@ ok
 |404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
+
+## Deleteobject `POST`
+Удаление объекта. Для удаления объекта из системы достаточно указать GUID искомого объекта без указания флага `TFlag` или с явным указанием `TFlag = true`. 
+
+Для удаления объекта из состава родительского объекта последний должен быть указан в [TObject](#TObject)
+
+### Request:
+
+```json
+{
+    "Mode": "Deleteobject",
+    "TFlag": false,
+    "TObject": {
+        "GUID": "{9BD08FB0-E1A5-4DA6-9C5B-BCD8C195ADCA}",
+        "Parent": "{3299618F-4B50-4F98-AAA4-7B7523100666}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|TFlag         |bool               |Дополнительный параметр, указующий на способ удаления "из системы" или "из состава"
+|TObject.GUID  |string             |Идентификатор объекта TDMS
+|TObject.Parent|string             |Родительский объект TDMS, из состава которого необходимо удалить объект
+
+### Response
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+Тело ответа:
+```
+Объект успешно удален из системы
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ## Createuser `POST`
 Создание пользователя TDMS. Возвращает системное имя пользователя. Логин пользователя генерится автоматически по правилу:
