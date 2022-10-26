@@ -1,30 +1,32 @@
 ﻿# Документация REST API TDMS
-Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System ) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.150.0`]( https://ftp.csoft.ru/file_36462546162fb6eda0c2c8)
+Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.171.0`](https://ftp.csoft.ru/file_30924759633e3aa01372e)
 
 ## Содержание
 - [Развертывание](#Развертывание)
 - [Обзор](#Обзор)
 - [Авторизация](#Авторизация)
-- [Request body](#Request-body)
-    - [TObject](#TObject)
-    - [TObjectDef](#TObjectDef)
-    - [TStatus](#TStatus)
-    - [TFileDef](#TFileDef)
-    - [TAttribute](#TAttribute)
-    - [TShortObject](#TShortObject)
-    - [TVersion](#TVersion)
-    - [TUser](#TUser)
-    - [Parameters](#Parameters)
-    - [APIEventFilters](#APIEventFilters)
-- [Получение объекта](#Getobject-post)
-- [Получение состава объекта](#Getobjectcontent-post)
-- [Получение типа объекта](#Getobjectdef-post)
-- [Получение версии объекта по описанию версии](#Getversionbydescription-post)
-- [Создание объекта](#Createobject-post)
-- [Изменение объекта](#Editobject-post)
-- [Удаление объекта](#Deleteobject-post)
-- [Выполнение exetrn функции](#ExecuteFunc-post)
-- [Получение событий](#GetAPIEvents-post)
+- [Постороение тела запросов](#Постороение-тела-запросов)
+  - [Request body](#Request-body)
+  - [TObject](#TObject)
+  - [TObjectDef](#TObjectDef)
+  - [TStatus](#TStatus)
+  - [TFileDef](#TFileDef)
+  - [TAttribute](#TAttribute)
+  - [TShortObject](#TShortObject)
+  - [TVersion](#TVersion)
+  - [TUser](#TUser)
+  - [Parameters](#Parameters)
+  - [APIEventFilters](#APIEventFilters)
+- [Методы](#Методы)
+  - [Получение объекта](#Getobject-post)
+  - [Получение состава объекта](#Getobjectcontent-post)
+  - [Получение типа объекта](#Getobjectdef-post)
+  - [Получение версии объекта по описанию версии](#Getversionbydescription-post)
+  - [Создание объекта](#Createobject-post)
+  - [Изменение объекта](#Editobject-post)
+  - [Удаление объекта](#Deleteobject-post)
+  - [Выполнение exetrn функции](#ExecuteFunc-post)
+  - [Получение событий](#GetAPIEvents-post)
 
 ## Развертывание
 Для развертывания решения необходимо скачать репозиторий, нажав на `Download ZIP`:
@@ -88,13 +90,17 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 }
 ```
 
-## Request body
-Ниже представлено тело `POST` запроса. Оно содержит параметры требуемые для метода API, указанного в параметре `Mode` 
+## Построение тела запроса
+
+### Request body
+Ниже представлено тело `POST` запроса. Оно содержит параметры требуемые в методе API, указанном в параметре `Mode` 
 
 ```json
 {
     "Mode": "",
     "TObject": {},
+    "TObjects": [],
+    "TConditions": [],
     "TUser": {},
     "Submode": "",
     "Parameters": [],
@@ -107,6 +113,8 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |-              |-                                  |-               
 |Mode           |string                             |Вызываемый метод API
 |TObject        |[TObject](#TObject)                |Описание объекта TDMS
+|TObjects       |[[TObject](#TObject)]              |Коллекция объектов TDMS
+|TConditions    |[[TObject](#TObject)]              |Коллекция условия в выборке
 |TUser          |[TUser](#TUser)                    |Описание пользователя TDMS
 |Submode        |string                             |Задает именованные параметры Submode
 |Parameters     |[JParam](#JParam)                  |Задает имя пользовательского метода в конфигурации, который необходимо выпонить
@@ -436,365 +444,12 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Before    |DateTime|        |Возвращать события начиная до этой временной точки (не включая ее) (UTC)
 |Type      |string  |true    |Возвращать события данного типа
 
-## Getobject `POST`
-Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
+## Методы
 
-### Request:
-
-```json
-{
-    "Mode": "Getobject",
-    "TObject": {
-        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
-    }
-}
-```
-
-Обязательные параметры:
-
-|Parameter   |Type               |Description
-|-           |-                  |-               
-|Mode        |string             |Getobject - вызываемый метод API
-|TObject     |[TObject](#TObject)|Объект TDMS
-|TObject.GUID|string             |Идентификатор объекта TDMS
-
-### Response
-
-```
-Status: 200
-Content-Type: application/json
-```
-
-```json
-{
-  "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
-  "ObjectGuid": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
-  "ObjectDefName": "O_Complex",
-  "Description": "3333 Ухта комплекс",
-  "Parent": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
-  "StatusName": "",
-  "ModifyTime": "26.07.2022 15:17:02",
-  "ModifyUser": {
-    "SysName": "SYSADMIN",
-    "Description": "SYSADMIN",
-    "FirstName": null,
-    "LastName": null,
-    "MiddleName": null,
-    "Login": "SYSADMIN",
-    "Password": null,
-    "Phone": null,
-    "Mail": null,
-    "Department": null,
-    "Position": null
-  },
-  "ActiveVersion": true,
-  "VersionDescription": "Начальная версия",
-  "VersionName": "1",
-  "VersionCreateTime": "25.11.2020 11:14:02",
-  "VersionCreateUser": {
-    "SysName": "SYSADMIN",
-    "Description": "SYSADMIN",
-    "FirstName": null,
-    "LastName": null,
-    "MiddleName": null,
-    "Login": "SYSADMIN",
-    "Password": null,
-    "Phone": null,
-    "Mail": null,
-    "Department": null,
-    "Position": null
-  },
-  "TAttributes": [
-    {
-      "SysName": "A_Str_Designation",
-      "Value": "3333",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_Name",
-      "Value": "Ухта комплекс",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_Note",
-      "Value": "",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Ref_Parent",
-      "Value": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
-      "Type": "tdmObjectLink"
-    },
-    {
-      "SysName": "A_Ref_ComplexType",
-      "Value": "{41499C6A-4105-4C00-AC35-E832D51A51CB}",
-      "Type": "tdmObjectLink"
-    },
-    {
-      "SysName": "A_Str_GUID_External",
-      "Value": "",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_CodeCmplx",
-      "Value": "0203.001.001",
-      "Type": "tdmString"
-    }
-  ],
-  "TVersions": [
-    {
-      "VersionDescription": "Начальная версия",
-      "VersionName": "1",
-      "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}"
-    }
-  ],
-  "TContent": null
-}
-```
-
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
-## Getobjectcontent `POST`
-Получение состава объекта TDMS по GUID указанном в [TObject](#TObject)
-
-### Request:
-
-```json
-{
-    "Mode": "Getobjectcontent",
-    "TObject": {
-        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
-    }
-}
-```
-
-Обязательные параметры:
-
-|Parameter   |Type               |Description
-|-           |-                  |-               
-|Mode        |string             |Вызываемый метод API
-|TObject     |[TObject](#TObject)|Объект TDMS
-|TObject.GUID|string             |Идентификатор объекта TDMS
-
-### Response
-
-```
-Status: 200
-Content-Type: application/json
-```
-
-```json
-{
-  "TContent": [
-    {
-      "Description": "Структура комплекса",
-      "GUID": "{28ECF8F2-0124-41EA-B37F-CED9190146CC}",
-      "ObjectDefName": "O_Folder_Complex_Structure"
-    },
-    {
-      "Description": "Общая информация",
-      "GUID": "{B05A7F23-5597-45DD-A7E8-C8CAE3B28149}",
-      "ObjectDefName": "O_Folder_Doc"
-    },
-    {
-      "Description": "0203.001.001 - 1-Й ЭТАП (ВОСТОЧНЫЙ КОРИДОР), ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ОБЪЕМЕ ДО 63 МЛРД.М3/ГОД Этап 2.1. Линейная часть. Участок «Починки-Анапа», км 0 –км 347,5 (км 0 – км 181, км 181 – км 295,7, км 295,7 – км 347,5)",
-      "GUID": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
-      "ObjectDefName": "O_Project"
-    }
-  ]
-}
-```
-
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
-## Getobjectdef `POST`
-Получение информации о типе объекта TDMS по идентификатору, указанному в [TObject](#TObject)
-
-### Request:
-
-```json
-{
-    "mode": "Getobjectdef",
-    "TObject": {
-        "ObjectDefName": "O_PDoc"
-    }
-} 
-```
-
-Обязательные параметры:
-
-|Parameter            |Type               |Description
-|-                    |-                  |-               
-|Mode                 |string             |Вызываемый метод API
-|TObject              |[TObject](#TObject)|Объект TDMS
-|TObject.ObjectDefName|string             |Идентификатор типа объекта
-
-### Response
-
-```
-Status: 200
-Content-Type: application/json
-```
-
-Тело запроса: 
-
-```json
-{
-  "FileDefs": [
-    {
-      "Description": "Текстовый документ",
-      "Sysname": "FILE_DOC",
-      "Extensions": "*.doc, *.docx, *.rtf, *.odt, *.txt"
-    },
-    {
-      "Description": "Электронная таблица",
-      "Sysname": "FILE_XLS",
-      "Extensions": "*.xls, *.xlsx, *.csv, *.ods"
-    },
-    {
-      "Description": "Публикация",
-      "Sysname": "FILE_PDF_PUBL",
-      "Extensions": "*.pdf"
-    },
-    {
-      "Description": "Документ Adobe Acrobat",
-      "Sysname": "FILE_AA_PDF",
-      "Extensions": "*.pdf"
-    },
-    {
-      "Description": "Подлинник",
-      "Sysname": "FILE_PDF_ORIG",
-      "Extensions": "*.pdf, tif, *.tiff"
-    },
-    {
-      "Description": "Исходные данные для расчета",
-      "Sysname": "FILE_DLG",
-      "Extensions": "*.dlg, *.dlf"
-    },
-    {
-      "Description": "Файл ЭЦП",
-      "Sysname": "FILE_SIG",
-      "Extensions": "*.sig, *.sgn"
-    },
-    {
-      "Description": "Чертеж CAD",
-      "Sysname": "FILE_DWG",
-      "Extensions": "*.dwg, *.dxf, *.dwf, *.dgn"
-    }
-  ],
-  "Statuses": [
-    {
-      "Description": "Недействующий (Документ)",
-      "SysName": "S_Doc_Cancel"
-    },
-    {
-      "Description": "В разработке (Документ)",
-      "SysName": "S_Doc_Developing"
-    },
-    {
-      "Description": "Разработан (Документ)",
-      "SysName": "S_Doc_Developed"
-    },
-    {
-      "Description": "На согласовании (Документ)",
-      "SysName": "S_Doc_Agreement"
-    },
-    {
-      "Description": "Проверка в архиве (Документ)",
-      "SysName": "S_Doc_ArchCheck"
-    },
-    {
-      "Description": "Действующий (Документ)",
-      "SysName": "S_Doc_Archived"
-    },
-    {
-      "Description": "Действующий на изменении (Документ)",
-      "SysName": "S_Doc_Changing"
-    },
-    {
-      "Description": "Аннулирован (Документ)",
-      "SysName": "S_Doc_Annulled"
-    }
-  ]
-}
-```
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
-## Getversionbydescription `POST`
-Получение версий объекта TDMS по описанию версии объекта [TObject](#TObject)
-
-### Request:
-
-```json
-{
-    "Mode": "Getversionbydescription",
-    "TObject": {
-        "GUID": "{91C40073-340A-43B4-9EC1-43A3A9BB8512}",
-        "VersionDescription": "hello"
-    }
-}
-```
-
-Обязательные параметры:
-
-|Parameter                 |Type               |Description
-|-                         |-                  |-               
-|Mode                      |string             |Getversionbydescription - вызываемый метод API
-|TObject                   |[TObject](#TObject)|Объект TDMS
-|TObject.GUID              |string             |Идентификатор объекта TDMS, вреди версий которого осуществляется поиск
-|TObject.VersionDescription|string             |Описание версии объекта TDMS
-
-### Response
-
-```
-Status: 200
-Content-Type: text/plain; charset=UTF-8
-```
-
-Статус успешно выполненного запроса:
-
-```
-ok
-```
-
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
-## Createobject `POST`
+### Createobject `POST`
 Создание объекта TDMS. Объект может быть создан как в составе указанного родителя `parent`, так и не имея родителя. Не все свойства объекта TDMS могут быть изменены
 
-### Request:
+#### Request:
 ```
 Content-Type: application/json
 ```
@@ -825,7 +480,7 @@ Content-Type: application/json
 |TObject                    |[TObject](#TObject)|Объект TDMS
 |TObject.ObjectDefName      |string             |Имя типа объекта TDMS
 
-### Response
+#### Response
 
 ```
 Status: 200
@@ -1040,10 +695,136 @@ Content-Type: application/json
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-## Editobject `POST`
+### Getobject `POST`
+Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Getobject - вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
+  "ObjectGuid": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
+  "ObjectDefName": "O_Complex",
+  "Description": "3333 Ухта комплекс",
+  "Parent": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
+  "StatusName": "",
+  "ModifyTime": "26.07.2022 15:17:02",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": "Начальная версия",
+  "VersionName": "1",
+  "VersionCreateTime": "25.11.2020 11:14:02",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": null,
+    "LastName": null,
+    "MiddleName": null,
+    "Login": "SYSADMIN",
+    "Password": null,
+    "Phone": null,
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "3333",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "Ухта комплекс",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Ref_ComplexType",
+      "Value": "{41499C6A-4105-4C00-AC35-E832D51A51CB}",
+      "Type": "tdmObjectLink"
+    },
+    {
+      "SysName": "A_Str_GUID_External",
+      "Value": "",
+      "Type": "tdmString"
+    },
+    {
+      "SysName": "A_Str_CodeCmplx",
+      "Value": "0203.001.001",
+      "Type": "tdmString"
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": "Начальная версия",
+      "VersionName": "1",
+      "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}"
+    }
+  ],
+  "TContent": null
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Editobject `POST`
 Изменение объекта TDMS. Могут быть изменены свойства, атрибуты и состояния объекта TDMS. Перечень изменяемых параметров описыватся объектом [TObject](#TObject)
 
-### Request:
+#### Request:
 
 ```json
 {
@@ -1071,7 +852,7 @@ Content-Type: application/json
 |TObject     |[TObject](#TObject)|Объект TDMS
 |TObject.GUID|string             |Идентификатор объекта TDMS
 
-### Response
+#### Response
 
 ```
 Status: 200
@@ -1093,12 +874,12 @@ ok
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-## Deleteobject `POST`
+### Deleteobject `POST`
 Удаление объекта. Для удаления объекта из системы достаточно указать GUID искомого объекта без указания флага `TFlag` или с явным указанием `TFlag = true`. 
 
 Для удаления объекта из состава родительского объекта последний должен быть указан в [TObject](#TObject)
 
-### Request:
+#### Request:
 
 ```json
 {
@@ -1121,7 +902,7 @@ ok
 |TObject.GUID  |string             |Идентификатор объекта TDMS
 |TObject.Parent|string             |Родительский объект TDMS, из состава которого необходимо удалить объект
 
-### Response
+#### Response
 ```
 Status: 200
 Content-Type: text/plain; charset=UTF-8
@@ -1141,11 +922,252 @@ Content-Type: text/plain; charset=UTF-8
 |404 NotFound  |В запросе не найден параметр {параметр}
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
-## Createuser `POST`
+### Getobjectcontent `POST`
+Получение состава объекта TDMS по GUID указанном в [TObject](#TObject)
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobjectcontent",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "TContent": [
+    {
+      "Description": "Структура комплекса",
+      "GUID": "{28ECF8F2-0124-41EA-B37F-CED9190146CC}",
+      "ObjectDefName": "O_Folder_Complex_Structure"
+    },
+    {
+      "Description": "Общая информация",
+      "GUID": "{B05A7F23-5597-45DD-A7E8-C8CAE3B28149}",
+      "ObjectDefName": "O_Folder_Doc"
+    },
+    {
+      "Description": "0203.001.001 - 1-Й ЭТАП (ВОСТОЧНЫЙ КОРИДОР), ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ОБЪЕМЕ ДО 63 МЛРД.М3/ГОД Этап 2.1. Линейная часть. Участок «Починки-Анапа», км 0 –км 347,5 (км 0 – км 181, км 181 – км 295,7, км 295,7 – км 347,5)",
+      "GUID": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
+      "ObjectDefName": "O_Project"
+    }
+  ]
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Getobjectdef `POST`
+Получение информации о типе объекта TDMS по идентификатору, указанному в [TObject](#TObject)
+
+#### Request:
+
+```json
+{
+    "mode": "Getobjectdef",
+    "TObject": {
+        "ObjectDefName": "O_PDoc"
+    }
+} 
+```
+
+Обязательные параметры:
+
+|Parameter            |Type               |Description
+|-                    |-                  |-               
+|Mode                 |string             |Вызываемый метод API
+|TObject              |[TObject](#TObject)|Объект TDMS
+|TObject.ObjectDefName|string             |Идентификатор типа объекта
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+Тело запроса: 
+
+```json
+{
+  "FileDefs": [
+    {
+      "Description": "Текстовый документ",
+      "Sysname": "FILE_DOC",
+      "Extensions": "*.doc, *.docx, *.rtf, *.odt, *.txt"
+    },
+    {
+      "Description": "Электронная таблица",
+      "Sysname": "FILE_XLS",
+      "Extensions": "*.xls, *.xlsx, *.csv, *.ods"
+    },
+    {
+      "Description": "Публикация",
+      "Sysname": "FILE_PDF_PUBL",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Документ Adobe Acrobat",
+      "Sysname": "FILE_AA_PDF",
+      "Extensions": "*.pdf"
+    },
+    {
+      "Description": "Подлинник",
+      "Sysname": "FILE_PDF_ORIG",
+      "Extensions": "*.pdf, tif, *.tiff"
+    },
+    {
+      "Description": "Исходные данные для расчета",
+      "Sysname": "FILE_DLG",
+      "Extensions": "*.dlg, *.dlf"
+    },
+    {
+      "Description": "Файл ЭЦП",
+      "Sysname": "FILE_SIG",
+      "Extensions": "*.sig, *.sgn"
+    },
+    {
+      "Description": "Чертеж CAD",
+      "Sysname": "FILE_DWG",
+      "Extensions": "*.dwg, *.dxf, *.dwf, *.dgn"
+    }
+  ],
+  "Statuses": [
+    {
+      "Description": "Недействующий (Документ)",
+      "SysName": "S_Doc_Cancel"
+    },
+    {
+      "Description": "В разработке (Документ)",
+      "SysName": "S_Doc_Developing"
+    },
+    {
+      "Description": "Разработан (Документ)",
+      "SysName": "S_Doc_Developed"
+    },
+    {
+      "Description": "На согласовании (Документ)",
+      "SysName": "S_Doc_Agreement"
+    },
+    {
+      "Description": "Проверка в архиве (Документ)",
+      "SysName": "S_Doc_ArchCheck"
+    },
+    {
+      "Description": "Действующий (Документ)",
+      "SysName": "S_Doc_Archived"
+    },
+    {
+      "Description": "Действующий на изменении (Документ)",
+      "SysName": "S_Doc_Changing"
+    },
+    {
+      "Description": "Аннулирован (Документ)",
+      "SysName": "S_Doc_Annulled"
+    }
+  ]
+}
+```
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Getversionbydescription `POST`
+Получение версий объекта TDMS по описанию версии объекта [TObject](#TObject)
+
+#### Request:
+
+```json
+{
+    "Mode": "Getversionbydescription",
+    "TObject": {
+        "GUID": "{91C40073-340A-43B4-9EC1-43A3A9BB8512}",
+        "VersionDescription": "hello"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter                 |Type               |Description
+|-                         |-                  |-               
+|Mode                      |string             |Getversionbydescription - вызываемый метод API
+|TObject                   |[TObject](#TObject)|Объект TDMS
+|TObject.GUID              |string             |Идентификатор объекта TDMS, вреди версий которого осуществляется поиск
+|TObject.VersionDescription|string             |Описание версии объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Статус успешно выполненного запроса:
+
+```
+ok
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Findobjects `POST`
+Поиск TDMS объектов по типу объекта и значениям атрибутов. Возвращается коллекция объектов [TShortObject](#TShortObject), соотвутствующих кретериям поиска
+
+#### Request
+
+```
+Content-Type: application/json
+```
+
+#### Response
+
+
+### Createuser `POST`
 Создание пользователя TDMS. Возвращает системное имя пользователя. Логин пользователя генерится автоматически по правилу:
 `{Lastname}{Firstname}`
 
-### Request:
+#### Request:
 
 ```
 Content-Type: application/json
@@ -1177,7 +1199,7 @@ Content-Type: application/json
 |user.Phone         |string          |
 |user.Mail          |string          |
 
-### Response
+#### Response
 ```
 Status: 200
 Content-Type: text/plain; charset=UTF-8
@@ -1197,10 +1219,10 @@ USER_5CC201F2_3306_4A92_A2D1_65FAD0E25916
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-## UpdateUser `POST`
+### EditUser `POST`
 Updates attributes for existing TDMS User
 
-### Request:
+#### Request:
 ```
 Content-Type: application/json
 ```
@@ -1237,7 +1259,7 @@ Content-Type: application/json
 |user.position  |string|false   |TDMS Position Classifier's sysname
 |user.department|string|false   |TDMS Department Classifier's sysname
 
-### Response
+#### Response
 ```
 Status: 200
 Content-Type: text/plain; charset=UTF-8
@@ -1256,7 +1278,7 @@ ok
 |404 NotFound  |Invalid 'mode' value. Should be 'createuser', 'updateuser' etc.
 |404 NotFound  |TDMS User sysname = {sysname} not found";
 
-## ExecuteFunc `POST`
+### ExecuteFunc `POST`
 Метод позволяет выполнить специальную функцию, определенную в конфигурации (на vbs) или в специальном расширении сервера. Функция должна быть помечена в скрипте как `extern`.
 
 Функция должна возвращать только примитивный тип данных (string, date, bool, int, float).
@@ -1265,7 +1287,7 @@ ok
 
 Исключения, возникающие при вызове, генерируют ошибку HTTP. Превышение времени ожидания генерирует ошибку HTTP. 
 
-### Request:
+#### Request:
 ```
 Content-Type: application/json
 ```
@@ -1296,7 +1318,7 @@ Content-Type: application/json
 |Submode    |string             |Задает имя пользовательского метода в конфигурации, который необходимо выпонить. Если имя метода содержит точку, то точка должна быть строго одна (и не должна стоять в начале или в конце строки). Имя слева от точки трактуется как имя произвольного класса доступного в сборке, реализующей контроллер на базе TDMSCPIController, а имя справа от точки трактуася как имя публичного метода этого класса. Если имя метода не содержит точки, оно трактуется как имя метода непосредственно в классе контроллера (основанного на TDMSCPIController).
 |Parameters |[[JParam](#JParam)]|Задает именованные параметры submode
 
-### Response
+#### Response
 ```
 Status: 200
 Content-Type: application/json
@@ -1315,7 +1337,7 @@ Content-Type: application/json
 |404 NotFound  |Не указано имя функции
 |404 NotFound  |Не найдена функция расширения, либо недостаточно прав для ее вызова
 
-## GetAPIEvents `POST`
+### GetAPIEvents `POST`
 Позволяет получить список определенных событий, произошедших в TDMS за определенный период времени. Можно получить специальные события API, а также некоторые стандартные события TDMS связанных с объектами TDMS определенного типа.
 
 Специальные события регистрируется при вызове функции внутри vbs-конфигурации `L_Misc.APIEvent`. В текущей версии используется стандартный журнал событий TDMS, но в последующих версиях реализация может быть изменена.
@@ -1323,7 +1345,7 @@ Content-Type: application/json
 Каждое специальное событие имеет тип, идентифицируемый строкой длинной от 3 до 16 символов без пробелов, время наступления, необязательное краткое сообщение (до 1000 символов) и необязательный один прикрепленный объект TDMS
 Для каждого стандартного события возвращается тип, идентифицируемый типом стандартного события, время наступления, описание события и обязательный один прикрепленный объект TDMS заданного типа
 
-### Request:
+#### Request:
 ```
 Content-Type: application/json
 ```
@@ -1351,7 +1373,7 @@ Content-Type: application/json
 |mode            |string                               |GetAPIEvents - вызываемый метод API
 |APIEventFilters |[[JAPIEventFilter](#JAPIEventFilter)]|Задает фильтры для получения специальных событий
 
-### Response
+#### Response
 ```
 Status: 200
 Content-Type: application/json
