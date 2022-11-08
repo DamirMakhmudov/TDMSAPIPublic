@@ -13,18 +13,26 @@
   - [TFileDef](#TFileDef)
   - [TAttribute](#TAttribute)
   - [TShortObject](#TShortObject)
+  - [TCondition](#TCondition)
   - [TVersion](#TVersion)
   - [TUser](#TUser)
   - [Parameters](#Parameters)
   - [APIEventFilters](#APIEventFilters)
 - [Методы](#Методы)
   - [Получение объекта](#Getobject-post)
-  - [Получение состава объекта](#Getobjectcontent-post)
-  - [Получение типа объекта](#Getobjectdef-post)
-  - [Получение версии объекта по описанию версии](#Getversionbydescription-post)
   - [Создание объекта](#Createobject-post)
   - [Изменение объекта](#Editobject-post)
   - [Удаление объекта](#Deleteobject-post)
+  - [Получение состава объекта](#Getobjectcontent-post)
+  - [Получение типа объекта](#Getobjectdef-post)
+  - [Получение версии объекта по описанию версии](#Getversionbydescription-post)
+  - [Поиск объектов](#Findobjects-post)
+  - [Создание версии](#Createversion-post)
+  - [Удаление файлов](#Deletefiles-post)
+  - [Создание ссылки на объект](#Createlink-post)
+  - [Перемещение объекта](#Moveobject-post)
+  - [Создание пользователя](#Createuser-post)
+  - [Изменение пользователя](#Edit-post)
   - [Выполнение exetrn функции](#ExecuteFunc-post)
   - [Получение событий](#GetAPIEvents-post)
 
@@ -93,7 +101,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 ## Построение тела запроса
 
 ### Request body
-Ниже представлено тело `POST` запроса. Оно содержит параметры требуемые в методе API, указанном в параметре `Mode` 
+Ниже представлено тело `POST` запроса. В параметре `Mode` необходимо указать имя вызываемого метода
 
 ```json
 {
@@ -121,7 +129,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |APIEventFilters|[JAPIEventFilter](#JAPIEventFilter)|Задает фильтры для получения специальных событий
 
 ### `TObject`
-Параметр `TObject` иллюстрирует информационный объект TDMS. С его помощью передаются свойства, атрибуты, версии и состояния последнего. Также используется в ответах на запросы
+Иллюстрирует информационный объект TDMS. С его помощью передаются свойства, атрибуты, версии и состояния последнего. Также используется в ответах на запросы
 
 ```json
 {
@@ -191,8 +199,8 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 
 |Parameter         |Type                       |Read only|Description
 |-                 |-                          |-        |-               
-|GUID              |string                     |true     |Идентификатор объекта TDMS
-|ObjectGuid        |string                     |true     |Общий для всех версий идентификатор объекта TDMS
+|GUID              |string                     |true     |Глобально уникальный идентификатор объекта (GUID)
+|ObjectGuid        |string                     |true     |Единый guid на все версии одного объекта. В случае классической версионности он совпадает с GUID для активной версии. В случае новой версионности он совпадает с первой версией
 |ObjectDefName     |string                     |true     |Имя типа объекта TDMS
 |Description       |string                     |         |Описание типа объекта TDMS
 |Parent            |string                     |true     |Идентификатор родительского объекта TDMS
@@ -328,6 +336,21 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |SysName    |string|Системное имя типа файла
 |Extensions |string|Возможные расширения файлов данного типа
 
+### `TFile`
+Описание файла TDMS
+
+```json
+{
+    "FileDefName": "FILE_PDF_PUBL",
+    "FileName": "Отчет Модуль TDMS API.pdf"
+}
+```
+
+|Parameter  |Type  |Description
+|-          |-     |-               
+|FileDefName|string|Описание типа файла
+|FileName    |string|Системное имя типа файла
+
 ### `TAttribute`
 Атрибут объекта TDMS. Как правило входит в коллекцию атрибутов `TAttributes`
 
@@ -361,6 +384,29 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Description  |string|Описание объекта
 |GUID         |string|Идентификатор объекта
 |ObjectDefName|string|Тип объекта
+
+### `TCondition`
+Условие поиска (применяется в методе поиска объектов [Findobjects](#Findobjects))
+
+```json
+[
+    {
+        "Type": "ObjectDef",
+        "Value": "'O_Building' or 'O_Part'"
+    },
+    {
+        "Type": "Attribute",
+        "SysName": "A_Str_Designation",
+        "Value": "'0203.КТО.001.4701- 4799.007' or '0203.КТО.001'"
+    }
+]
+```
+
+|Parameter|Type  |Description
+|-        |-     |-               
+|Type     |string|Тип условия принимает значения: ObjectDef - для указания типа объекта, Attribute - для указания атрибута объекта
+|SysName  |string|Системное имя атрибута
+|Value    |string|Значение условия поиска
 
 ### `TVersion`
 Версия объекта TDMS. Как правило входит в коллекцию версий `TVersions`
@@ -445,6 +491,367 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Type      |string  |true    |Возвращать события данного типа
 
 ## Методы
+
+### Getobject `POST`
+Получение информации об объекте TDMS по GUID. Возвращаются свойства, атрибуты, описание файлового состава объекта
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Getobject - вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}",
+  "ObjectGuid": "{297FCA5B-79B4-4240-9C54-9D22654C7EAE}",
+  "ObjectDefName": "O_Set",
+  "Description": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС изм.5",
+  "Parent": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+  "StatusName": "S_Volume_Annulled",
+  "ModifyTime": "03.10.2022 10:04:27",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": "",
+  "VersionName": "1",
+  "VersionCreateTime": "22.02.2022 14:21:17",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "ЮЕГ. РАСШИРЕНИЕ ЕСГ ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ГАЗОПРОВОД «ЮЖНЫЙ ПОТОК». Газопроводы газораспределительных систем. Газораспределительная станция. Электроснабжение",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_Author",
+      "Value": "USER_GMV",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Complex",
+      "Value": "{2B1C6ED4-17B0-4553-8756-B631F640BB9A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_PagesCount",
+      "Value": 10,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_A4Count",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_ShFormats",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Formats",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_OrderChange",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_ChangeNum",
+      "Value": 5,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_List_Change",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptEA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptTA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End",
+      "Value": "21.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Barcode",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Cls_DSP",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum_SubPodr",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_SubDesignation",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Part",
+      "Value": "{83C58C7B-6553-4678-976E-A51EDBC2F7AE}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Build",
+      "Value": "{8BD91B25-748A-4CDF-A3FE-A1D840A97E83}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Organization",
+      "Value": "{E17BC391-8108-4DCD-A06C-6E3F6406CF2A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Contract",
+      "Value": "{696D7F3D-8B71-441C-921C-5C2E629819B9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_GIP",
+      "Value": "USER_F6798DB1_3AB3_471A_A9E8_C6CEC2B49748",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_SubContract",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Predecessors",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Mark",
+      "Value": "{D1019109-4AFB-4B03-81DC-9EE68E97C0E9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_MarkNum",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Phase",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Bool_Sync",
+      "Value": "",
+      "Type": "tdmBool",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Project",
+      "Value": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_Stage",
+      "Value": "1",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_SubStage",
+      "Value": "2",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_sCodeMark",
+      "Value": "ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Stage",
+      "Value": "{D3B27616-5A99-44E9-8AF6-CFC9E1C7BA41}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Dept",
+      "Value": "{A93A7BCE-A69C-48C9-ACD6-7797EA225132}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Dat_NTB_DocImplDate",
+      "Value": "22.08.2022 14:30:11",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Designation_Customer",
+      "Value": "ЙЙЙЙ",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin_Fact",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End_Fact",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Package_Unload",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": "",
+      "VersionName": "1",
+      "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}"
+    },
+    {
+      "VersionDescription": "РИ №246-21 от 12.10.2021",
+      "VersionName": "Изм.4",
+      "GUID": "{816C6166-B562-4EEC-BDFF-38ABAC81EB79}"
+    }
+  ],
+  "TContent": null,
+  "TFiles": null
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Createobject `POST`
 Создание объекта TDMS. Объект может быть создан как в составе указанного родителя `parent`, так и не имея родителя. Не все свойства объекта TDMS могут быть изменены
@@ -695,132 +1102,6 @@ Content-Type: application/json
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-### Getobject `POST`
-Получение информации об объекте TDMS по GUID указанном в [TObject](#TObject)
-
-#### Request:
-
-```json
-{
-    "Mode": "Getobject",
-    "TObject": {
-        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
-    }
-}
-```
-
-Обязательные параметры:
-
-|Parameter   |Type               |Description
-|-           |-                  |-               
-|Mode        |string             |Getobject - вызываемый метод API
-|TObject     |[TObject](#TObject)|Объект TDMS
-|TObject.GUID|string             |Идентификатор объекта TDMS
-
-#### Response
-
-```
-Status: 200
-Content-Type: application/json
-```
-
-```json
-{
-  "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
-  "ObjectGuid": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}",
-  "ObjectDefName": "O_Complex",
-  "Description": "3333 Ухта комплекс",
-  "Parent": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
-  "StatusName": "",
-  "ModifyTime": "26.07.2022 15:17:02",
-  "ModifyUser": {
-    "SysName": "SYSADMIN",
-    "Description": "SYSADMIN",
-    "FirstName": null,
-    "LastName": null,
-    "MiddleName": null,
-    "Login": "SYSADMIN",
-    "Password": null,
-    "Phone": null,
-    "Mail": null,
-    "Department": null,
-    "Position": null
-  },
-  "ActiveVersion": true,
-  "VersionDescription": "Начальная версия",
-  "VersionName": "1",
-  "VersionCreateTime": "25.11.2020 11:14:02",
-  "VersionCreateUser": {
-    "SysName": "SYSADMIN",
-    "Description": "SYSADMIN",
-    "FirstName": null,
-    "LastName": null,
-    "MiddleName": null,
-    "Login": "SYSADMIN",
-    "Password": null,
-    "Phone": null,
-    "Mail": null,
-    "Department": null,
-    "Position": null
-  },
-  "TAttributes": [
-    {
-      "SysName": "A_Str_Designation",
-      "Value": "3333",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_Name",
-      "Value": "Ухта комплекс",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_Note",
-      "Value": "",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Ref_Parent",
-      "Value": "{C82DF367-E7FA-419F-BE7D-AD4B813726DE}",
-      "Type": "tdmObjectLink"
-    },
-    {
-      "SysName": "A_Ref_ComplexType",
-      "Value": "{41499C6A-4105-4C00-AC35-E832D51A51CB}",
-      "Type": "tdmObjectLink"
-    },
-    {
-      "SysName": "A_Str_GUID_External",
-      "Value": "",
-      "Type": "tdmString"
-    },
-    {
-      "SysName": "A_Str_CodeCmplx",
-      "Value": "0203.001.001",
-      "Type": "tdmString"
-    }
-  ],
-  "TVersions": [
-    {
-      "VersionDescription": "Начальная версия",
-      "VersionName": "1",
-      "GUID": "{EB73F5A5-F57E-4E15-8E07-B57EEB7ED2C1}"
-    }
-  ],
-  "TContent": null
-}
-```
-
-Ошибки:
-
-|Error code    |Description
-|-             |-
-|400 BadRequest|Any error
-|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
-|404 NotFound  |Указанный метод в параметре 'mode' не найден
-|404 NotFound  |В запросе не найден параметр {параметр}
-|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
-
 ### Editobject `POST`
 Изменение объекта TDMS. Могут быть изменены свойства, атрибуты и состояния объекта TDMS. Перечень изменяемых параметров описыватся объектом [TObject](#TObject)
 
@@ -875,7 +1156,7 @@ ok
 |404 NotFound  |В запросе не найден параметр {параметр}
 
 ### Deleteobject `POST`
-Удаление объекта. Для удаления объекта из системы достаточно указать GUID искомого объекта без указания флага `TFlag` или с явным указанием `TFlag = true`. 
+Удаление объекта. Для удаления объекта из состава в параметре `TFlag` необходимо указать `TFlag = true`, для удаления из системы необходимо указать `TFlag = false` либо не указывать парамеетр TFlag совсем. 
 
 Для удаления объекта из состава родительского объекта последний должен быть указан в [TObject](#TObject)
 
@@ -903,11 +1184,14 @@ ok
 |TObject.Parent|string             |Родительский объект TDMS, из состава которого необходимо удалить объект
 
 #### Response
+
 ```
 Status: 200
 Content-Type: text/plain; charset=UTF-8
 ```
+
 Тело ответа:
+
 ```
 Объект успешно удален из системы
 ```
@@ -1011,8 +1295,6 @@ Content-Type: application/json
 Status: 200
 Content-Type: application/json
 ```
-
-Тело запроса: 
 
 ```json
 {
@@ -1156,11 +1438,569 @@ ok
 
 #### Request
 
+```json
+{
+    "Mode": "Findobjects",
+    "TConditions": [
+        {
+            "Type": "ObjectDef",
+            "Value": "'O_Building' or 'O_Part'"
+        },
+        {
+            "Type": "Attribute",
+            "SysName": "A_Str_Designation",
+            "Value": "'0203.КТО.001.4701- 4799.007' or '0203.КТО.001'"
+        }
+    ]
+}
 ```
+
+Обязательные параметры:
+
+|Parameter            |Type                     |Description
+|-                    |-                        |-               
+|Mode                 |string                   |Вызываемый метод API
+|TConditions          |[TCondition](#TCondition)|Коллекция условий поиска
+
+#### Response
+
+```
+Status: 200
 Content-Type: application/json
 ```
 
+```json
+{
+  "TContent": [
+    {
+      "Description": "0203.КТО.001 - Комплекс термического обезвреживания отходов",
+      "GUID": "{E57103AF-E7ED-4410-B596-2D9648FE8793}",
+      "ObjectDefName": "O_Part",
+      "ActiveVersion": true
+    },
+    {
+      "Description": "0203.КТО.001.4701- 4799.007 - Линии электропередач воздушные и электротехнические коммуникации",
+      "GUID": "{D7683875-4730-46F9-933E-66D5E99A4D1A}",
+      "ObjectDefName": "O_Building",
+      "ActiveVersion": true
+    }
+  ]
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Createversion `POST`
+Создание версии объекта с указанием имени и описания версии
+
+#### Request
+
+```json
+{
+    "Mode": "Createversion",
+    "TObject": {
+        "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}",
+        "VersionName": "13 Hi"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter                    |Type               |Description
+|-                            |-                  |-               
+|Mode                         |string             |Вызываемый метод API
+|TObject                      |[TObject](#TObject)|Объект TDMS
+|TObject.GUID                 |string             |Идентификатор объекта TDMS
+|TObject.VersonName           |string             |Имя версии
+|TObject.VersonDescriptionName|string             |Описание версии
+
 #### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "GUID": "{CE1DD719-ACB0-4456-A530-EACF89ADE2EA}",
+  "ObjectGuid": "{297FCA5B-79B4-4240-9C54-9D22654C7EAE}",
+  "ObjectDefName": "O_Set",
+  "Description": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС изм.5",
+  "Parent": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+  "StatusName": "S_Volume_Annulled",
+  "ModifyTime": "08.11.2022 9:25:56",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": null,
+  "VersionName": "13 Hi",
+  "VersionCreateTime": "08.11.2022 9:25:56",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "ЮЕГ. РАСШИРЕНИЕ ЕСГ ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ГАЗОПРОВОД «ЮЖНЫЙ ПОТОК». Газопроводы газораспределительных систем. Газораспределительная станция. Электроснабжение",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_Author",
+      "Value": "USER_GMV",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Complex",
+      "Value": "{2B1C6ED4-17B0-4553-8756-B631F640BB9A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_PagesCount",
+      "Value": 10,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_A4Count",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_ShFormats",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Formats",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_OrderChange",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_ChangeNum",
+      "Value": 5,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_List_Change",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptEA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptTA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End",
+      "Value": "21.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Barcode",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Cls_DSP",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum_SubPodr",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_SubDesignation",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Part",
+      "Value": "{83C58C7B-6553-4678-976E-A51EDBC2F7AE}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Build",
+      "Value": "{8BD91B25-748A-4CDF-A3FE-A1D840A97E83}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Organization",
+      "Value": "{E17BC391-8108-4DCD-A06C-6E3F6406CF2A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Contract",
+      "Value": "{696D7F3D-8B71-441C-921C-5C2E629819B9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_GIP",
+      "Value": "USER_F6798DB1_3AB3_471A_A9E8_C6CEC2B49748",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_SubContract",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Predecessors",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Mark",
+      "Value": "{D1019109-4AFB-4B03-81DC-9EE68E97C0E9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_MarkNum",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Phase",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Bool_Sync",
+      "Value": "",
+      "Type": "tdmBool",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Project",
+      "Value": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_Stage",
+      "Value": "1",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_SubStage",
+      "Value": "2",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_sCodeMark",
+      "Value": "ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Stage",
+      "Value": "{D3B27616-5A99-44E9-8AF6-CFC9E1C7BA41}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Dept",
+      "Value": "{A93A7BCE-A69C-48C9-ACD6-7797EA225132}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Dat_NTB_DocImplDate",
+      "Value": "22.08.2022 14:30:11",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Designation_Customer",
+      "Value": "ЙЙЙЙ",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin_Fact",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End_Fact",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Package_Unload",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": null,
+      "VersionName": "13 Hi",
+      "GUID": "{CE1DD719-ACB0-4456-A530-EACF89ADE2EA}"
+    },
+    {
+      "VersionDescription": "РИ №246-21 от 12.10.2021",
+      "VersionName": "Изм.4",
+      "GUID": "{816C6166-B562-4EEC-BDFF-38ABAC81EB79}"
+    },
+    {
+      "VersionDescription": "",
+      "VersionName": "1",
+      "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}"
+    }
+  ],
+  "TContent": null,
+  "TFiles": null
+}
+```
+
+### Deletefiles `POST`
+Удаление файлов из файлового состава объекта
+
+#### Request
+
+```json
+{
+    "Mode": "Deletefiles",
+    "TObject": {
+        "GUID": "{586C55CA-DDAB-4575-91E3-ADCE5B86D03C}",
+        "TFiles": [
+            {
+                "FileDefName": "FILE_PDF_PUBL", "FileName": "Отчет Модуль TDMS API.pdf"
+            }
+        ]
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |string             |Идентификатор объекта TDMS
+|TObject.TFiles|[[TFile](#TFile)]  |Коллекция описаний файлов или типов файло, которые необходимо удалить
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+Файл(ы) успешно удалены
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Createlink `POST`
+Создание ссылки на объект в составе другого объекта
+
+#### Request
+
+```json
+{
+    "Mode": "Createlink",
+    "TObject": {
+        "GUID": "{0F0401D7-EC6A-4C03-9AAD-83F2F110620A}",
+        "Parent": "{F72A14E4-722E-4C3D-8EEB-601187557C37}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |string             |Идентификатор объекта TDMS
+|TObject.Parent|string             |Объект, в состав которого необходимо поместить ссылку
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+ok
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Moveobject `POST`
+Перемещение объекта в состав нового родителя
+
+#### Request
+
+```json
+{
+    "Mode": "Moveobject",
+    "TObject": {
+        "GUID": "{D119A8C0-39BF-46D4-9FCF-5D1F84593199}",
+        "Parent": "{D54E0B39-D7E1-48DF-BD86-736599F1CA7E}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |string             |Идентификатор объекта TDMS
+|TObject.Parent|string             |Новый родительский объект
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+ok
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 
 ### Createuser `POST`
