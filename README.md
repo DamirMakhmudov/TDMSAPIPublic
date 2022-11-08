@@ -31,6 +31,8 @@
   - [Удаление файлов](#Deletefiles-post)
   - [Создание ссылки на объект](#Createlink-post)
   - [Перемещение объекта](#Moveobject-post)
+  - [Получение пользователя](#Getuser-post)
+  - [Получение текущего пользователя](#Getcurrentuser-post)
   - [Создание пользователя](#Createuser-post)
   - [Изменение пользователя](#Edit-post)
   - [Выполнение exetrn функции](#ExecuteFunc-post)
@@ -2002,6 +2004,127 @@ ok
 |404 NotFound  |В запросе не найден параметр {параметр}
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
+
+
+### Getuser `POST`
+Получение информации о пользователе
+
+#### Request:
+
+```json
+{
+    "Mode": "Getuser",
+    "TUser": {
+        "Description": "Абдрахманова Гузель Флуровна",
+        "Sysname": "U_X_8D00A152-8788-11E5-DE87-5254005756B4"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter    |Type           |Description
+|-            |-              |-               
+|mode         |string         |Вызываемый метод API
+|TUser        |[TUser](#TUser)|Пользователь TDMS
+|TUser.Sysname|string         |Идентификатор пользователя TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "SysName": "U_X_8D00A152-8788-11E5-DE87-5254005756B4",
+  "Description": "Абдрашитова Олеся Нагимовна",
+  "FirstName": "Олеся",
+  "LastName": "Абдрашитова",
+  "MiddleName": "Нагимовна",
+  "Login": "oabdrashitova",
+  "Password": null,
+  "Phone": "(770) 58309ddvdvdv",
+  "Mail": null,
+  "Department": {
+    "Code": "",
+    "Description": "Отдел компрессорных станций",
+    "SysName": "NODE_B21A1E89_B7D8_4A56_BB54_99E1F6C84283"
+  },
+  "Position": {
+    "Code": "",
+    "Description": "Архитектор 2 категории",
+    "SysName": "NODE00026770"
+  }
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getcurrentuser `POST`
+Получение информации о текущем пользователе, от имени которого отправлен запрос
+
+#### Request:
+
+```json
+{
+    "Mode": "Getcurrentuser",
+}
+```
+
+Обязательные параметры:
+
+|Parameter    |Type           |Description
+|-            |-              |-               
+|Mode         |string         |Вызываемый метод API
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "SysName": "U_X_8D00A152-8788-11E5-DE87-5254005756B4",
+  "Description": "Абдрашитова Олеся Нагимовна",
+  "FirstName": "Олеся",
+  "LastName": "Абдрашитова",
+  "MiddleName": "Нагимовна",
+  "Login": "oabdrashitova",
+  "Password": null,
+  "Phone": "(770) 58309ddvdvdv",
+  "Mail": null,
+  "Department": {
+    "Code": "",
+    "Description": "Отдел компрессорных станций",
+    "SysName": "NODE_B21A1E89_B7D8_4A56_BB54_99E1F6C84283"
+  },
+  "Position": {
+    "Code": "",
+    "Description": "Архитектор 2 категории",
+    "SysName": "NODE00026770"
+  }
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
 
 ### Createuser `POST`
 Создание пользователя TDMS. Возвращает системное имя пользователя. Логин пользователя генерится автоматически по правилу:
