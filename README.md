@@ -20,6 +20,7 @@
   - [APIEventFilters](#APIEventFilters)
 - [Методы](#Методы)
   - [Получение объекта](#Getobject-post)
+  - [Получение активной версии объекта](#Getobjectactiveversion-post)
   - [Создание объекта](#Createobject-post)
   - [Изменение объекта](#Editobject-post)
   - [Удаление объекта](#Deleteobject-post)
@@ -62,7 +63,7 @@ http://tdms-srv-virt:444/api
 Используются запросы `POST` и `GET`. Тело запроса `POST` передается в формате `JSON`. Требуемый метод API (`Createobject`, `Editobject` и т.д.) необходимо указывать в параметре `mode` в содержимом запроса `POST`. Перечень обязательных параметров запроса для каждого метода API индивидуален
 
 ## Авторизация
-Все запросы авторизуются с помощью `access_token`, который необходимо добавить в `headers`. 
+Все запросы авторизуются с помощью `access_token`, который необходимо добавить в заголовки `headers`. 
 ```
 Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..etmTl5Im6-yxCVhjgP5Ajw.-iuDNbbDtq289WBAHg56PPlq4-dMqsx6YTOFoVbjNc1wHEHcXQwj-uDTr-KnnujSq8S8DBgMtxx7WCbFzwtpRYlr_VprBbiGt1IvcGvaHU0_paGFfl8hqp0sH-dOC_IjWoNq0JzibpXQrTBWDBDYbCyREY0dsHd4RRZhduG5qK_48MPx3VVv6UBeFH6KqS5kKWlkk0uek8LJaeRKxldDmJBC1mry99Epx8-E-mLHn2MBcGiplYTpqsU93B4fLQtfwqFc6siNSkwj6jP-xK8jgNPKBBdxNQUqlo_dzX4hC5odeD2ZZZ71CdrM7zRuJxXv3NRpx8EWQwSSVfue8H28Ez-wdpprEsJjhRZc6Fe-IAtLkCHEAo8bTCSbiSGwv-iWj9dzfCF2N8ZWObViTbRkDTElyEqQBnmWwwW8F2IFHgiKm-8OhJPjuzkpFXHxmyQKtn3cmpOHwVhG-ReK6sogoVNo4ipC7DoAUnUU_sLgw-h9ybtIaSenk8kmHQMTyD1lVP-HBM8vEVd3PZiKF-SFwvbTgbFfR1c3cpuFu1SRbUesN7xYZ_zI5OrqL8xQ3x0nGbN2U5n8gH_-uEMcGr6yT-d4rdgKuN3hiZ8YMTnZsoIFZcD8pUoi2aQVf4YLl9C4.93DwkSd8A2kYo1verZcV363GPwhBycjwDd9Pw2VAkws
 ```
@@ -70,6 +71,7 @@ Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSl
 ```xml
  <server AccessTokenExpireMinutes="720" RefreshTokenExpireMinutes="4320" ResourcesExpireMinutes="720"
 ```
+### Авторизация Basic
 Для получения `access_token` необходимо отправить запрос на endpoint `/token`
 ```
 http://your_host/token
@@ -88,7 +90,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 ```
 >ВАЖНО: при перезагрузке приложения TDMS Application Server выданные токены становятся недействительными
 
-Пример:
+#### Response
 ```json
 {
     "$id": "1",
@@ -97,6 +99,47 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "username": "labakshina",
     "expires_in": 43260,
     "refresh_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..VX1prrofk14U5yjmmVfSqA.E1byQDYghJWDfP2Tpxxdbz7P4wdTbCsDwnYLg-WY2WXX_sOqXqISaYV647pDM71nAtwy53y19Ou1SAIoUqfeA9xriEqbFNk1MwTCWQ7S4NnW1EPlnD9KcU4aaTWPfgOLQsgVvwYMPPNUEs8EDu20RQZweSPqyGoDk4EyLZ0xoXhS3f38ZjWEz2w1kSWdYeZD4Bqc000rvVuYUgxmkOp1ksFGuDi8UTFPB8RlkGUvnCd4nmj6mKp1S-iOoe561IDqg98YJsdnGyHmCgT0wfOtPPpZ4pr-Ey-6jygYDNqw1tSe5kMkVVYaeUoAq26ixZxdGsh2eeTDSVRzYD5Tg15Cin1he8wapmZ8O4NKsCV6AhJvKNII5MO5TEgMZEWZKj70QH_L0Om7cAXxoMFkyEidyCWUPV-YzCUytY67lpNZx5MdvOSppm88lEZHCvKtF5LavLeaQ35d-6lGVhE9YDBinTUoCDlr-lg2_1s25DPZHS_2mqZr-UqNU2vXp8KtMPXV2cpaklvUY5-qHVPn1eYsHM-m2smTp6LAI8oW-v62bR8LFqrEcg-I52MkYf9g-qq9POKRcw17w6SeODKWzuP90oDuCRidQsJF70OfzvEXrNhxT-qp1v3T6VPNoDeE994hos-j6KskQ_ny6eDWOYt71o4q8KjSeLhAxK6_u9n0D7w.UPU1E5fMfK3yoaXBEFu65v0ysheV38tMM38WzXj2_RI"
+}
+```
+### Доменная авторизация
+
+Для получения `access_token` необходимо отправить запрос на endpoint `/token` с параметром `?authType=WIN`
+```
+http://your_host/token?authType=WIN
+```
+#### Request
+
+```js
+public object getAccessToken()
+    {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://your_host/token?authType=WIN");
+        request.Method = "POST";
+        request.Accept = "/";
+        request.ContentType = "text/plain";
+        request.Headers.Add("WWW-Authenticate", "Negotiate");
+        using (Stream requestStream = request.GetRequestStream())
+        using (var writer = new StreamWriter(requestStream))
+        {
+            writer.WriteLine("grant_type=password&client_id=Web");
+        }
+        request.Credentials = CredentialCache.DefaultNetworkCredentials;
+        WebResponse response = request.GetResponse();
+        StreamReader sr = new StreamReader(response.GetResponseStream());
+        string jsonString = sr.ReadToEnd();
+        sr.Close();
+        return StatusCode(StatusCodes.Status200OK, jsonString);
+    }
+```
+
+#### Response
+```json
+{
+  "$id": "1",
+  "$type": "Tdms.Server.Security.TokensInfo, Tdms.Server.Host",
+  "access_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..zOXBMliLyX9A9LK3HOkj6g.Lx5MXGarG4JyRWw0zz7TIG3BQxwl9IYN0bjveRTz44M3WdzTqQClk1I6LLtJ5l4ack51aNtNElJyY36wXGS9VHqLZTb405mCUAtDjJDkb5K6o0TpGloIRGqNimxDtzZkjdI9xipML2tYi80z39PUNNjGnbZ9pWEYGNsTA4WVHxUtkDfuoxJevAbUR9Ers9yFn8HXzwNeA4B6NXtDOYFwkxjs6GkDCDFQKVzxwSATLzYZ0_Lr5-p7GjXhDgxa961epH5ZpMLYnUU3X16Ma6QRCOPf5hIfMzLHrbqYzWBmDiAPlsbCRfEg9x3Vbaya61J1oavKQwGUksYVNwIt5ft1ho-47UltY5iGoDqWnmsmmduiyVHE3mP35RYsekfYnUeGJK8Dqmu0ndV1BfY6dO6_9DsKJYfg2PfeFRq0wm-N2YHJvgtZGQd9w_kIjsUYSYTeOnHGgJbHQB1LEH_9PMz47V1lipiDTjUs8Xz_3zR7NVBrkBEhLAM1Khj-oAmP3xPnnYZIbJ99OG64qz6LFzv2Rqt1KypAwI4S45KgxZBLJ9PCjBA0rSEa6IsEfJIZV2rifLw1tUVDsMeABIkG5Sx-tUq_6hRRX7uwehIaVuurjOeyJRGqbTYEYWSwnzVQAW5Q.HNuYS-Ha0rxXsWDg3SDdVtczuTLOd_i_HZW9Xt4bETI",
+  "username": "csoftkazan\\damir",
+  "expires_in": 43260,
+  "refresh_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..SGnm7bKoI4L6JKiGBdMYsw.eDaVvrFdsg-ZOgUWd881GeWyekHb4z02DDjjMHtGZBieGvM82n7IfF8HfGEWYX_40IWSA8JPqeJUP2cic6XYgSBWnqTkcYugW59VV_FO8O5keN_4Xke6KvFCYDeKNdP-bKXIZniq0Fx1pGsUcu0ZpMalrgGDr2pfq5PfZG4USMLYHNBQH8G4ONEBsGxcIxYcJkSKuZLxBv4nCyYJgAFMpz4IKGjRNWPFy4C54dBUqM7pOfl9HqGSFdLtjoQ95rWUH5nHL7P6zVedHK0nGmvLszkVKuClrY5NCKCvNe4clggfnEq_tneGg8q5XA2w_FEWinYEOks4kCFttb1eUaIdg6JHkVyM9o1Yg4DgsKmJdZbMppDZ8MrWO62zcVVSgZXeSfAtCwiZUwW6c3nkp0DMZuHf6XtK_wirI8-YYwKa5lXacwMGg2OPhkL0lhXih-yx0B1awfjEyR4ZZ4fMCABwLnzCk-clzSCS7npqgQbsTRdT3P8TxfstEU58mrX8662CovBdvlJAc2bLE2bDCicZwzICT98mCTYfFCOa78k1mRC7SuzJuGh1yUqOYK_mZUxuKKNgbkXHnHf9qtyhVT7LBord_HWp9hv4VRTsGLz99g0WlDiCiyWud4gdYYdzA4vHu47-HIanNwY-xlB7UsHN-8Lww5ljzjrTXTYd0OgBH0s.XtcfCzORH3kzzY5ugbsVf410fWQq27xpltB4-MZjOfk"
 }
 ```
 
@@ -377,7 +420,8 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 {
     "Description": "Структура комплекса",
     "GUID": "{28ECF8F2-0124-41EA-B37F-CED9190146CC}",
-    "ObjectDefName": "O_Folder_Complex_Structure"
+    "ObjectDefName": "O_Folder_Complex_Structure",
+    "StatusNme": "S_Doc_Annulled"
 }
 ```
 
@@ -386,6 +430,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 |Description  |string|Описание объекта
 |GUID         |string|Идентификатор объекта
 |ObjectDefName|string|Тип объекта
+|StatusName   |string|Системное имя текущего статуса
 
 ### `TCondition`
 Условие поиска (применяется в методе поиска объектов [Findobjects](#Findobjects))
@@ -502,6 +547,367 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 ```json
 {
     "Mode": "Getobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Getobject - вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}",
+  "ObjectGuid": "{297FCA5B-79B4-4240-9C54-9D22654C7EAE}",
+  "ObjectDefName": "O_Set",
+  "Description": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС изм.5",
+  "Parent": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+  "StatusName": "S_Volume_Annulled",
+  "ModifyTime": "03.10.2022 10:04:27",
+  "ModifyUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "ActiveVersion": true,
+  "VersionDescription": "",
+  "VersionName": "1",
+  "VersionCreateTime": "22.02.2022 14:21:17",
+  "VersionCreateUser": {
+    "SysName": "SYSADMIN",
+    "Description": "SYSADMIN",
+    "FirstName": "Сергей",
+    "LastName": "Капаров",
+    "MiddleName": "Михайлович",
+    "Login": "sysadmin",
+    "Password": null,
+    "Phone": "",
+    "Mail": null,
+    "Department": null,
+    "Position": null
+  },
+  "TAttributes": [
+    {
+      "SysName": "A_Str_Designation",
+      "Value": "0203.001.Р.1/2.0001.ГГРС.001.1102.12-ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Name",
+      "Value": "ЮЕГ. РАСШИРЕНИЕ ЕСГ ДЛЯ ОБЕСПЕЧЕНИЯ ПОДАЧИ ГАЗА В ГАЗОПРОВОД «ЮЖНЫЙ ПОТОК». Газопроводы газораспределительных систем. Газораспределительная станция. Электроснабжение",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_Author",
+      "Value": "USER_GMV",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Note",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Complex",
+      "Value": "{2B1C6ED4-17B0-4553-8756-B631F640BB9A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_PagesCount",
+      "Value": 10,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_A4Count",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_ShFormats",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Formats",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Parent",
+      "Value": "{83CF7B6D-E11A-47D9-A4B7-5B316AF4033C}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_OrderChange",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_ChangeNum",
+      "Value": 5,
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_List_Change",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptEA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_AcceptTA",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End",
+      "Value": "21.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Barcode",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Cls_DSP",
+      "Value": "",
+      "Type": "tdmList",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_InvNum_SubPodr",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_SubDesignation",
+      "Value": "",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Part",
+      "Value": "{83C58C7B-6553-4678-976E-A51EDBC2F7AE}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Build",
+      "Value": "{8BD91B25-748A-4CDF-A3FE-A1D840A97E83}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Organization",
+      "Value": "{E17BC391-8108-4DCD-A06C-6E3F6406CF2A}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Contract",
+      "Value": "{696D7F3D-8B71-441C-921C-5C2E629819B9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_User_GIP",
+      "Value": "USER_F6798DB1_3AB3_471A_A9E8_C6CEC2B49748",
+      "Type": "tdmUserLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_SubContract",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Table_Predecessors",
+      "Value": null,
+      "Type": "tdmTable",
+      "TTableRows": []
+    },
+    {
+      "SysName": "A_Ref_Mark",
+      "Value": "{D1019109-4AFB-4B03-81DC-9EE68E97C0E9}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Int_MarkNum",
+      "Value": "",
+      "Type": "tdmInteger",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Phase",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Bool_Sync",
+      "Value": "",
+      "Type": "tdmBool",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Project",
+      "Value": "{DEBDC3FF-E9E0-4F29-A948-E0F6FB7306AC}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_Stage",
+      "Value": "1",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Building_SubStage",
+      "Value": "2",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_sCodeMark",
+      "Value": "ЭС",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Stage",
+      "Value": "{D3B27616-5A99-44E9-8AF6-CFC9E1C7BA41}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Dept",
+      "Value": "{A93A7BCE-A69C-48C9-ACD6-7797EA225132}",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Dat_NTB_DocImplDate",
+      "Value": "22.08.2022 14:30:11",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Str_Designation_Customer",
+      "Value": "ЙЙЙЙ",
+      "Type": "tdmString",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_Begin_Fact",
+      "Value": "01.10.2021 0:00:00",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Date_End_Fact",
+      "Value": "",
+      "Type": "tdmDate",
+      "TTableRows": null
+    },
+    {
+      "SysName": "A_Ref_Package_Unload",
+      "Value": "",
+      "Type": "tdmObjectLink",
+      "TTableRows": null
+    }
+  ],
+  "TVersions": [
+    {
+      "VersionDescription": "",
+      "VersionName": "1",
+      "GUID": "{491544D8-8491-4098-A399-5FA4ABC27F22}"
+    },
+    {
+      "VersionDescription": "РИ №246-21 от 12.10.2021",
+      "VersionName": "Изм.4",
+      "GUID": "{816C6166-B562-4EEC-BDFF-38ABAC81EB79}"
+    }
+  ],
+  "TContent": null,
+  "TFiles": null
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Getobjectactiveversion `POST`
+Возвращает активную версию объекта TDMS по GUID любой прежней версии. Возвращаются свойства, атрибуты, описание файлового состава объекта
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobjectactiveversion",
     "TObject": {
         "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
     }
