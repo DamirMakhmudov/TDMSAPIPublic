@@ -1,5 +1,5 @@
 ﻿# Документация REST API TDMS
-Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.183.0`](http://share.mcad.ru/file/9ddb3d871bddfd28a076cb804d80e711)
+Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.185.0`](https://ftp.csoft.ru/file_12478048656386eabe9231c)
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -25,6 +25,7 @@
   - [Изменение объекта](#Editobject-post)
   - [Удаление объекта](#Deleteobject-post)
   - [Получение состава объекта](#Getobjectcontent-post)
+  - [Получение объектов, ссылающихся на указанный объект](#Getreferencedby-post)
   - [Получение типа объекта](#Getobjectdef-post)
   - [Получение версии объекта по описанию версии](#Getversionbydescription-post)
   - [Поиск объектов](#Findobjects-post)
@@ -32,6 +33,9 @@
   - [Удаление файлов](#Deletefiles-post)
   - [Создание ссылки на объект](#Createlink-post)
   - [Перемещение объекта](#Moveobject-post)
+  - [Блокировка объекта](#Lockobject-post)
+  - [Разблокировка объекта](#Unlockobject-post)
+  - [Получение статуса блокировки](#Getobjectpermissions-post)
   - [Получение пользователя](#Getuser-post)
   - [Получение текущего пользователя](#Getcurrentuser-post)
   - [Создание пользователя](#Createuser-post)
@@ -1675,6 +1679,66 @@ Content-Type: application/json
 |404 NotFound  |В запросе не найден параметр {параметр}
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
+### Getreferencedby `POST`
+Возвращает все объекты ссылающиеся на указанный в методе посредством связи через прямой атрибут типа "ссылка" и табличный атрибут в составе котрого атрибут типа "ссылка"
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobjectcontent",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter   |Type               |Description
+|-           |-                  |-               
+|Mode        |string             |Вызываемый метод API
+|TObject     |[TObject](#TObject)|Объект TDMS
+|TObject.GUID|string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+  "TContent": [
+    {
+      "Description": "0001-XXX1-19 от 14.10.2019 (Санкт-Петербургcкий филиал)",
+      "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}",
+      "ObjectDefName": "O_Bill",
+      "ActiveVersion": true,
+      "StatusName": "S_Bill_Annulled"
+    },
+    {
+      "Description": "123 от  (Санкт-Петербургcкий филиал)",
+      "GUID": "{BE202BE8-53C3-4FAF-AFAA-365719A5F601}",
+      "ObjectDefName": "O_Bill",
+      "ActiveVersion": true,
+      "StatusName": "S_Bill_Closed"
+    }
+  ]
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
 ### Getobjectdef `POST`
 Получение информации о типе объекта TDMS по идентификатору, указанному в [TObject](#TObject)
 
@@ -2397,7 +2461,7 @@ Content-Type: text/plain; charset=UTF-8
 Тело ответа:
 
 ```
-ok
+OK
 ```
 
 Ошибки:
@@ -2410,7 +2474,193 @@ ok
 |404 NotFound  |В запросе не найден параметр {параметр}
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
+### Lockobject `POST`
+Блокировка объекта от имени пользователя выполняющего запрос. Существует 2 типа блокировки:
+Edit - 2 - редактированеи карточки объекта, Files - 3  - редактирвоание файлов объекта. Соответсвующие типы необходимо указать в теле запроса
 
+#### Request
+
+```json
+{
+    "Mode": "Lockobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    },
+    "Locktypes": [1,2]
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|Locktypes     |[]                 |Коллекция типов блокировки
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+OK
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Unlockobject `POST`
+Разблокировка объекта от имени пользователя выполняющего запрос. Существует 2 типа блокировки:
+Edit - 2 - редактированеи карточки объекта, Files - 3  - редактирвоание файлов объекта. Соответсвующие типы необходимо указать в теле запроса
+
+#### Request
+
+```json
+{
+    "Mode": "Unlockobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    },
+    "Locktypes": [1,2]
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+|Locktypes     |[]                 |Коллекция типов блокировки
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+OK
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Getobjectpermissions `POST`
+Информация о блокировке объекта. Возвращает факт блокировки, пользователя заблокировавшего объект, а также время блокировки
+
+#### Request:
+
+```json
+{
+    "Mode": "Getobjectpermissions",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter    |Type               |Description
+|-            |-                  |-               
+|Mode         |string             |Вызываемый метод API
+|TObject      |[TObject](#TObject)|Объект TDMS
+|TObject.GUID |string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+{
+    "Locked": true,
+    "LockUser": "SYSADMIN",
+    "LockTime": "16.12.2022 17:48:27"
+}
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Geturlobject `POST`
+Получить URL на указанный объект. URL ведет на карточку объекта в веб-клиенте TDMS. В ответе будет получен URL вида:
+```
+http://your_host/client/#locate/{handle}
+```
+где {handle} - это Handle объекта TDMS
+
+#### Request
+
+```json
+{
+    "Mode": "Geturlobject",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter     |Type               |Description
+|-             |-                  |-               
+|Mode          |string             |Вызываемый метод API
+|TObject       |[TObject](#TObject)|Объект TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: text/plain; charset=UTF-8
+```
+
+Тело ответа:
+
+```
+http://tdms-srv-virt:444/client/#locate/THB772039C72180000000000
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Getuser `POST`
 Получение информации о пользователе
