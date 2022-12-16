@@ -105,6 +105,7 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
     "refresh_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..VX1prrofk14U5yjmmVfSqA.E1byQDYghJWDfP2Tpxxdbz7P4wdTbCsDwnYLg-WY2WXX_sOqXqISaYV647pDM71nAtwy53y19Ou1SAIoUqfeA9xriEqbFNk1MwTCWQ7S4NnW1EPlnD9KcU4aaTWPfgOLQsgVvwYMPPNUEs8EDu20RQZweSPqyGoDk4EyLZ0xoXhS3f38ZjWEz2w1kSWdYeZD4Bqc000rvVuYUgxmkOp1ksFGuDi8UTFPB8RlkGUvnCd4nmj6mKp1S-iOoe561IDqg98YJsdnGyHmCgT0wfOtPPpZ4pr-Ey-6jygYDNqw1tSe5kMkVVYaeUoAq26ixZxdGsh2eeTDSVRzYD5Tg15Cin1he8wapmZ8O4NKsCV6AhJvKNII5MO5TEgMZEWZKj70QH_L0Om7cAXxoMFkyEidyCWUPV-YzCUytY67lpNZx5MdvOSppm88lEZHCvKtF5LavLeaQ35d-6lGVhE9YDBinTUoCDlr-lg2_1s25DPZHS_2mqZr-UqNU2vXp8KtMPXV2cpaklvUY5-qHVPn1eYsHM-m2smTp6LAI8oW-v62bR8LFqrEcg-I52MkYf9g-qq9POKRcw17w6SeODKWzuP90oDuCRidQsJF70OfzvEXrNhxT-qp1v3T6VPNoDeE994hos-j6KskQ_ny6eDWOYt71o4q8KjSeLhAxK6_u9n0D7w.UPU1E5fMfK3yoaXBEFu65v0ysheV38tMM38WzXj2_RI"
 }
 ```
+
 ### Доменная авторизация
 
 Для получения `access_token` необходимо отправить запрос на endpoint `/token` с параметром `?authType=WIN`
@@ -145,6 +146,38 @@ public object getAccessToken()
   "expires_in": 43260,
   "refresh_token": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..SGnm7bKoI4L6JKiGBdMYsw.eDaVvrFdsg-ZOgUWd881GeWyekHb4z02DDjjMHtGZBieGvM82n7IfF8HfGEWYX_40IWSA8JPqeJUP2cic6XYgSBWnqTkcYugW59VV_FO8O5keN_4Xke6KvFCYDeKNdP-bKXIZniq0Fx1pGsUcu0ZpMalrgGDr2pfq5PfZG4USMLYHNBQH8G4ONEBsGxcIxYcJkSKuZLxBv4nCyYJgAFMpz4IKGjRNWPFy4C54dBUqM7pOfl9HqGSFdLtjoQ95rWUH5nHL7P6zVedHK0nGmvLszkVKuClrY5NCKCvNe4clggfnEq_tneGg8q5XA2w_FEWinYEOks4kCFttb1eUaIdg6JHkVyM9o1Yg4DgsKmJdZbMppDZ8MrWO62zcVVSgZXeSfAtCwiZUwW6c3nkp0DMZuHf6XtK_wirI8-YYwKa5lXacwMGg2OPhkL0lhXih-yx0B1awfjEyR4ZZ4fMCABwLnzCk-clzSCS7npqgQbsTRdT3P8TxfstEU58mrX8662CovBdvlJAc2bLE2bDCicZwzICT98mCTYfFCOa78k1mRC7SuzJuGh1yUqOYK_mZUxuKKNgbkXHnHf9qtyhVT7LBord_HWp9hv4VRTsGLz99g0WlDiCiyWud4gdYYdzA4vHu47-HIanNwY-xlB7UsHN-8Lww5ljzjrTXTYd0OgBH0s.XtcfCzORH3kzzY5ugbsVf410fWQq27xpltB4-MZjOfk"
 }
+```
+
+### Настройка CORS
+Настройка CORS осуществляется в файле конфигруации сервера - tdms.config (в папке установки TDMS Application Server).
+Возможность разрешить CORS-запрос на /token (TokenAllowAll - разрешить всё, TokenCorsHeaders - отдельные заголовки, TokenCorsOrigins - отдельные Origins) 
+
+Если указана опция `TokenAllowAll = false`, но при этом `TokenCorsHeaders` или `TokenCorsOrigins` непустые, то `TokenCorsHeaders`, если непустое - то разрешает указанные headers, если непустое TokenCorsOrigins, то разрешает указанные origins
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <fileServer minFreeSpace="5000000000" serverType="storage" maxFilesInDirectory="10000">
+    <devices>
+      <add Path="c:\TFSS\Persistent" DeviceId="1" ReadOnly="False" DeviceType="persistent" />
+      <add Path="c:\TFSS\Cache" DeviceId="2" ReadOnly="False" DeviceType="cache" />
+      <add Path="c:\TFSS\Temp" DeviceId="3" ReadOnly="False" DeviceType="temp" />
+      <add Path="c:\TFSS\Preview" DeviceId="4" ReadOnly="False" DeviceType="preview" />
+    </devices>
+  </fileServer>
+  <server redirectHttpToHttps="True" tokenAllowAll="True" AccessTokenExpireMinutes="721" workFolder="c:\TFSS" serverId="" https="False" certificateFile="" RefreshTokenExpireMinutes="4321" ResourcesExpireMinutes="720" host="" secureKey="" connectionString="Data Source=TDMS-SRV-VIRT\TDMSSERVER;Initial Catalog=gpp6;User ID=sa;Password=123q321;" certificatePassword="" port="444">
+    <newblo />
+    <modules>
+      <add Enabled="True" Name="AppServer" Assembly="Tdms.Server.dll" />
+      <add Enabled="True" Name="FileServer" Assembly="Tdms.FileServer.dll" />
+      <add Enabled="True" Name="WebServer" Assembly="Tdms.Web.Server.dll" />
+      <add Enabled="True" Name="Scripting" Assembly="Tdms.Scripting.dll" />
+      <add Enabled="True" Name="Preview" Assembly="extensions\Tdms.Preview\Tdms.Preview.dll" />
+      <add Enabled="True" Name="TDMSAPI" Assembly="Extensions\TDMSAPI\TDMSAPI.dll" />
+    </modules>
+  </server>
+  <log level="Debug" MaxLogFileSize="512000000" />
+</configuration>
 ```
 
 ## Построение тела запроса
