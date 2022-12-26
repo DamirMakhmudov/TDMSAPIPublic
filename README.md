@@ -1,5 +1,5 @@
 ﻿# Документация REST API TDMS
-Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.185.0`](https://ftp.csoft.ru/file_12478048656386eabe9231c)
+Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.191.0`](https://ftp.csoft.ru/file_45228664363a93d077efd3)
 
 ## Содержание
 - [Развертывание](#Развертывание)
