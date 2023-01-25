@@ -1,5 +1,5 @@
 ﻿# Документация REST API TDMS
-Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.191.0`](https://ftp.csoft.ru/file_45228664363a93d077efd3)
+1Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.195.0`](http://share.mcad.ru/file/0dc3e553037c63c077a7d4d8b565f034)
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -35,7 +35,10 @@
   - [Перемещение объекта](#Moveobject-post)
   - [Блокировка объекта](#Lockobject-post)
   - [Разблокировка объекта](#Unlockobject-post)
-  - [Получение статуса блокировки](#Getobjectpermissions-post)
+  - [Информация о правах доступа на объекте](#Getobjectpermissions-post)
+  - [Информация о ролях на объекте](#Getobjectroles-post)
+  - [Информация о файловом составе объекта](#Getobjectfiles-post)
+  - [Получение статуса блокировки](#Getobjectlockstatus-post)
   - [Получение пользователя](#Getuser-post)
   - [Получение текущего пользователя](#Getcurrentuser-post)
   - [Создание пользователя](#Createuser-post)
@@ -2602,13 +2605,215 @@ OK
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Getobjectpermissions `POST`
+Информация о правах доступа пользователя на объекте. Если пользователь, чьи права необходимо получить, не указан, запрос будет выполнен для текущего пользователя
+
+#### Request:
+
+```json
+{
+    "mode": "Getobjectpermissions",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    },
+    "TUser": {
+        "SysName": "U_X_8D00A152-8788-11E5-DE87-5254005756B4"
+    }
+} 
+```
+
+Обязательные параметры:
+
+|Parameter    |Type               |Description
+|-            |-                  |-               
+|Mode         |string             |Вызываемый метод API
+|TObject      |[TObject](#TObject)|Объект TDMS
+|TObject.GUID |string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+[
+  {
+    "SysName": "View",
+    "Value": "tdmAllow"
+  },
+  {
+    "SysName": "Edit",
+    "Value": "tdmNone"
+  },
+  {
+    "SysName": "EditFiles",
+    "Value": "tdmAllow"
+  },
+  {
+    "SysName": "EditContent",
+    "Value": "tdmNone"
+  }
+]
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getobjectroles `POST`
+Информация о ролях объекта. Для получения ролей уонкретного пользователя его необходимо указать в параметре TUser.SySname. При указании параметра TUser.Sysname = null, вернутся роли текущего пользователя.
+Для получения всех ролей на объекте необходио отправлять запрос без указания параметра TUser
+
+#### Request:
+
+```json
+{
+    "mode": "Getobjectroles",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    },
+    "TUser": {
+        "SysName": "U_X_8D00A152-8788-11E5-DE87-5254005756B4"
+    }
+}  
+```
+
+Параметры:
+
+|Parameter    |Required|Type               |Description
+|-            |-       |-                  |-               
+|Mode         |true    |string             |Вызываемый метод API
+|TObject      |true    |[TObject](#TObject)|Объект TDMS
+|TObject.GUID |true    |string             |Идентификатор объекта TDMS
+|TUser        |false   |[TUser](#TUser)    |Пользователь
+|TUser.SySname|false   |string             |Идентификатор пользователя TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+[
+  {
+    "SysName": "ROLE_DEVELOPER",
+    "Description": "Разработчик",
+    "User": "SYSADMIN",
+    "Group": null
+  },
+  {
+    "SysName": "r_View",
+    "Description": "Просмотр",
+    "User": null,
+    "Group": "ALL_USERS"
+  },
+  {
+    "SysName": "R_PRC_Owner",
+    "Description": "Владелец",
+    "User": "U_X_8D00A152-8788-11E5-DE87-5254005756B4",
+    "Group": null
+  }
+]
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getobjectfiles`POST`
+Возвращает информацию о файловом составе объекта
+
+#### Request:
+
+```json
+{
+    "mode": "Getobjectfiles",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}   
+```
+
+Параметры:
+
+|Parameter    |Required|Type               |Description
+|-            |-       |-                  |-               
+|Mode         |true    |string             |Вызываемый метод API
+|TObject      |true    |[TObject](#TObject)|Объект TDMS
+|TObject.GUID |true    |string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+[
+    {
+        "FileDefName": "FILE_IMAGE",
+        "FileName": "download.jpg",
+        "CreateTime": "30.11.2021 9:48:21",
+        "Handle": "TH71B10752B1180000000000",
+        "ModifyTime": "30.11.2021 9:48:21",
+        "UploadUser": "SYSADMIN",
+        "UploadTime": "01.12.2021 13:52:32",
+        "WorkFileName": "c:\\TFSS\\Temp\\THFFE415E5E4050000000000\\{5E9FD474-EF02-4D56-B3E9-37751DD056DE}\\download.jpg"
+    },
+    {
+        "FileDefName": "FILE_IMAGE",
+        "FileName": "modnye-bluzki-1.jpg",
+        "CreateTime": "30.11.2021 9:50:13",
+        "Handle": "TH70B10751B1180000000000",
+        "ModifyTime": "30.11.2021 9:50:13",
+        "UploadUser": "SYSADMIN",
+        "UploadTime": "01.12.2021 13:52:32",
+        "WorkFileName": "c:\\TFSS\\Temp\\THFFE415E5E4050000000000\\{5E9FD474-EF02-4D56-B3E9-37751DD056DE}\\modnye-bluzki-1.jpg"
+    },
+    {
+        "FileDefName": "FILE_DOC",
+        "FileName": "Text.txt",
+        "CreateTime": "14.12.2022 18:01:12",
+        "Handle": "TH7C8C075A8C1B0000000000",
+        "ModifyTime": "14.12.2022 18:01:12",
+        "UploadUser": "SYSADMIN",
+        "UploadTime": "14.12.2022 18:01:12",
+        "WorkFileName": "c:\\TFSS\\Temp\\THFFE415E5E4050000000000\\{5E9FD474-EF02-4D56-B3E9-37751DD056DE}\\Text.txt"
+    }
+]
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getobjectlockstatus `POST`
 Информация о блокировке объекта. Возвращает факт блокировки, пользователя заблокировавшего объект, а также время блокировки
 
 #### Request:
 
 ```json
 {
-    "Mode": "Getobjectpermissions",
+    "Mode": "Getobjectlockstatus",
     "TObject": {
         "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
     }
