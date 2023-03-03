@@ -1,5 +1,5 @@
 ﻿# Документация REST API TDMS
-Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.198.0`](https://ftp.csoft.ru/file_51133827563d5f72867315)
+Документация REST API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.200.0`](https://ftp.csoft.ru/file_84504201063fee4133b646)
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -168,7 +168,7 @@ public object getAccessToken()
       <add Path="c:\TFSS\Preview" DeviceId="4" ReadOnly="False" DeviceType="preview" />
     </devices>
   </fileServer>
-  <server redirectHttpToHttps="True" tokenAllowAll="True" AccessTokenExpireMinutes="721" workFolder="c:\TFSS" serverId="" https="False" certificateFile="" RefreshTokenExpireMinutes="4321" ResourcesExpireMinutes="720" host="" secureKey="" connectionString="Data Source=TDMS-SRV-VIRT\TDMSSERVER;Initial Catalog=gpp6;User ID=sa;Password=123q321;" certificatePassword="" port="444">
+  <server redirectHttpToHttps="True" tokenAllowAll="True" tokenCorsAllowCredentials="True" AccessTokenExpireMinutes="721" workFolder="c:\TFSS" serverId="" https="False" certificateFile="" RefreshTokenExpireMinutes="4321" ResourcesExpireMinutes="720" host="" secureKey="" connectionString="Data Source=TDMS-SRV-VIRT\TDMSSERVER;Initial Catalog=gpp6;User ID=sa;Password=123q321;" certificatePassword="" port="444">
     <newblo />
     <modules>
       <add Enabled="True" Name="AppServer" Assembly="Tdms.Server.dll" />
