@@ -168,7 +168,7 @@ public object getAccessToken()
       <add Path="c:\TFSS\Preview" DeviceId="4" ReadOnly="False" DeviceType="preview" />
     </devices>
   </fileServer>
-  <server redirectHttpToHttps="True" tokenAllowAll="True" tokenCorsAllowCredentials="True" AccessTokenExpireMinutes="721" workFolder="c:\TFSS" serverId="" https="False" certificateFile="" RefreshTokenExpireMinutes="4321" ResourcesExpireMinutes="720" host="" secureKey="" connectionString="Data Source=TDMS-SRV-VIRT\TDMSSERVER;Initial Catalog=gpp6;User ID=sa;Password=123q321;" certificatePassword="" port="444">
+  <server redirectHttpToHttps="True" tokenAllowAll="True" tokenCorsAllowCredentials="True" tokenCorsHeaders="*" AccessTokenExpireMinutes="721" workFolder="c:\TFSS" serverId="" https="False" certificateFile="" RefreshTokenExpireMinutes="4321" ResourcesExpireMinutes="720" host="" secureKey="" connectionString="Data Source=TDMS-SRV-VIRT\TDMSSERVER;Initial Catalog=gpp6;User ID=sa;Password=123q321;" certificatePassword="" port="444">
     <newblo />
     <modules>
       <add Enabled="True" Name="AppServer" Assembly="Tdms.Server.dll" />
