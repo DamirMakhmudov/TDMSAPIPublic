@@ -1722,7 +1722,7 @@ Content-Type: application/json
 
 ```json
 {
-    "Mode": "Getobjectcontent",
+    "Mode": "Getreferencedby",
     "TObject": {
         "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
     }
