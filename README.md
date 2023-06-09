@@ -38,6 +38,7 @@
   - [Информация о правах доступа на объекте](#Getobjectpermissions-post)
   - [Информация о ролях на объекте](#Getobjectroles-post)
   - [Информация о файловом составе объекта](#Getobjectfiles-post)
+  - [Получение файлов объекта](#Getobjectfilescontent-post)
   - [Получение статуса блокировки](#Getobjectlockstatus-post)
   - [Получение пользователя](#Getuser-post)
   - [Получение текущего пользователя](#Getcurrentuser-post)
@@ -2805,6 +2806,54 @@ Content-Type: application/json
 |404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getobjectfilescontent`POST`
+Возвращает содержимое файлов объекта. Если в запросе не указаны имена искомых файлов, метод вернет архив с полным файловым составом
+
+#### Request:
+
+```json
+{
+    "mode": "Getobjectfilescontent",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}",
+        "TFiles": [
+            {
+                "FileName": "Инструкция.pdf"
+            },
+            {
+                "FileName": "download.jpg"
+            }
+        ]
+    }
+}    
+```
+
+Параметры:
+
+|Parameter     |Required|Type               |Description
+|-             |-       |-                  |-               
+|Mode          |true    |string             |Вызываемый метод API
+|TObject       |true    |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |true    |string             |Идентификатор объекта TDMS
+|TObject.TFiles|        |[TFile]            |Описание файла объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/octet-stream
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
 
 ### Getobjectlockstatus `POST`
 Информация о блокировке объекта. Возвращает факт блокировки, пользователя заблокировавшего объект, а также время блокировки
