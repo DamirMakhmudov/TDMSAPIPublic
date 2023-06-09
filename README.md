@@ -2734,7 +2734,7 @@ Content-Type: application/json
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-### Getobjectfiles`POST`
+### Getobjectfiles `POST`
 Возвращает информацию о файловом составе объекта
 
 #### Request:
@@ -2807,7 +2807,7 @@ Content-Type: application/json
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-### Getobjectfilescontent`POST`
+### Getobjectfilescontent `POST`
 Возвращает содержимое файлов объекта. Если в запросе не указаны имена искомых файлов, метод вернет архив с полным файловым составом
 
 #### Request:
