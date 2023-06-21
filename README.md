@@ -39,6 +39,7 @@
   - [Информация о ролях на объекте](#Getobjectroles-post)
   - [Информация о файловом составе объекта](#Getobjectfiles-post)
   - [Получение файлов объекта](#Getobjectfilescontent-post)
+  - [Отправка файлов в объект](#Addfiles-post)
   - [Получение статуса блокировки](#Getobjectlockstatus-post)
   - [Получение пользователя](#Getuser-post)
   - [Получение текущего пользователя](#Getcurrentuser-post)
@@ -2854,6 +2855,44 @@ Content-Type: application/octet-stream
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
+### Addfiles`POST`
+Помещает файл извне в файловый состав объекта. в URL необходимо прописать `/api/files`. Пример: `адрес_сервер/api/files`.
+Ниже представлен пример отправки запроса из Postman:
+![download repository!](./assets/003.png)
+Запрос отправляется в формате `form-data`. В ключе с именем `json` и типом `Text` необходимо поместить схему запроса в формате `json`. В остальные ключи с типом `File` (не `Text`) помещаются сами файлы
+
+```json
+{
+    "mode": "Addfiles",
+    "TObject": {
+        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+    }
+}    
+```
+
+Параметры:
+
+|Parameter     |Required|Type               |Description
+|-             |-       |-                  |-               
+|Mode          |true    |string             |Вызываемый метод API
+|TObject       |true    |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |true    |string             |Идентификатор объекта TDMS
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
 
 ### Getobjectlockstatus `POST`
 Информация о блокировке объекта. Возвращает факт блокировки, пользователя заблокировавшего объект, а также время блокировки
