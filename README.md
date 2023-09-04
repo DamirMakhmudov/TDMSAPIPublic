@@ -1,5 +1,5 @@
 ﻿# Документация REST API TDMS
-Документация REST  API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.203.0`](https://ftp.csoft.ru/file_151551897864181d5aee474) 
+Документация REST  API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.203.0`](https://ftp.csoft.ru/file_159946335164f1cfdd33cbc) 
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -2855,10 +2855,11 @@ Content-Type: application/octet-stream
 |404 NotFound  |Указанный метод в параметре 'mode' не найден
 |404 NotFound  |В запросе не найден параметр {параметр}
 
-### Addfiles`POST`
+### Addfiles `POST`
 Помещает файл извне в файловый состав объекта. в URL необходимо прописать `/api/files`. Пример: `адрес_сервер/api/files`.
 Ниже представлен пример отправки запроса из Postman:
 ![download repository!](./assets/003.png)
+
 Запрос отправляется в формате `form-data`. В ключе с именем `json` и типом `Text` необходимо поместить схему запроса в формате `json`. В остальные ключи с типом `File` (не `Text`) помещаются сами файлы
 
 ```json
