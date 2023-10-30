@@ -1,5 +1,9 @@
 ﻿# Документация REST API TDMS
-Документация REST  API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. Текущая поддерживаемая версия [`6.1.223.0`](https://ftp.csoft.ru/file_849345505650293b6b44c3) 
+Документация REST  API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. 
+Текущая поддерживаемые версии  
+[`6.1.230.0`](https://ftp.csoft.ru/file_49643468653882ca758a2)  
+[`7.0.46`](https://ftp.csoft.ru/file_10092679652d02db92e8f)
+
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -1657,7 +1661,8 @@ Content-Type: text/plain; charset=UTF-8
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Getobjectcontent `POST`
-Получение состава объекта TDMS по GUID указанном в [TObject](#TObject)
+Получение состава объекта TDMS по GUID указанном в [TObject](#TObject).
+При опциональном указании параметра `TFlag = true` можно получить расширенное описание объектов [TObject](#TObject) или короткое [TShortObject](#TShortObject)
 
 #### Request:
 
@@ -1666,7 +1671,8 @@ Content-Type: text/plain; charset=UTF-8
     "Mode": "Getobjectcontent",
     "TObject": {
         "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
-    }
+    },
+    "TFlag":true
 }
 ```
 
@@ -1944,7 +1950,56 @@ ok
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Findobjects `POST`
-Поиск TDMS объектов по типу объекта и значениям атрибутов. Возвращается коллекция объектов [TShortObject](#TShortObject), соотвутствующих кретериям поиска
+Поиск TDMS объектов по типу объекта и значениям атрибутов. Возвращается коллекция объектов [TShortObject](#TShortObject), соотвутствующих кретериям поиска.
+Поиск осуществляется по атрибутам и свойствам объекта.
+Указание типов объектов:
+
+```json
+{
+    "Type": "ObjectDef",
+    "Value": "'O_Building' or 'O_Part'"
+}
+```
+
+Поиск по атрибутам объекта:
+
+```json
+{
+    "Type": "Attribute",
+    "SysName": "A_Str_Designation",
+    "Value": "'0203.КТО.001.4701- 4799.007' or '0203.КТО.001'"
+}
+```
+
+Поиск по cвойствам объекта:
+
+```json
+{
+    "Type": "Property",
+    "Value": ">='23.10.2023'",
+    "SysName": "ModifyTime"
+},
+{
+    "Type": "Property",
+    "Value": "='U_X_8B57FC54-6CFA-11E5-6289-5254005756B4'",
+    "SysName": "ModifyUser"
+}
+```
+Перечень доступных свойств:  
+```
+ObjectDef
+Description
+Status
+Administrator
+CreateTime
+ModifyTime
+StatusModifiedTime
+CreateUser
+ModifyUser
+StatusModifiedUser
+Handle
+ObjectGuid
+```
 
 #### Request
 
@@ -1960,6 +2015,16 @@ ok
             "Type": "Attribute",
             "SysName": "A_Str_Designation",
             "Value": "'0203.КТО.001.4701- 4799.007' or '0203.КТО.001'"
+        },
+        {
+            "Type": "Property",
+            "Value": ">='23.10.2023'",
+            "SysName": "ModifyTime"
+        },
+        {
+            "Type": "Property",
+            "Value": "='U_X_8B57FC54-6CFA-11E5-6289-5254005756B4'",
+            "SysName": "ModifyUser"
         }
     ]
 }
@@ -1996,6 +2061,74 @@ Content-Type: application/json
     }
   ]
 }
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+|404 NotFound  |В системе не найден объект с GUID = '{GUID}'
+
+### Findusers `POST`
+Поиск пользователей TDMS [TUser](#TUser). Осуществляется по свойствам
+
+#### Request
+
+```json
+{
+    "mode": "Findusers",
+    "tuser": {
+        "LastName": "Иванов",
+        "PositionClassifier": {
+            "Description": "Главный геодезист",
+        }
+    }
+}
+```
+
+Обязательные параметры:
+
+|Parameter            |Type           |Description
+|-                    |-              |-               
+|Mode                 |string         |Вызываемый метод API
+|TUser                |[TUser](#TUser)|Свойства пользователя задаются как критерии поиска
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+[
+  {
+    "SysName": "U_X_7BC1E68C-5B40-4BFA-A928-60025D4A29BD",
+    "Description": "Иванов Петр Олегович",
+    "FirstName": "Петр",
+    "LastName": "Иванов",
+    "MiddleName": "Олегович",
+    "Login": "ivanov",
+    "Password": null,
+    "Phone": "(772) 51127",
+    "Mail": null,
+    "Position": null,
+    "DepartmentClassifier": {
+      "Code": "0007.850.853",
+      "Description": "Лаборатория тампонажных растворов",
+      "SysName": "N_X_3ED7AA91-F36B-11EA-80CB-A2F1AEE68492"
+    },
+    "PositionClassifier": {
+      "Code": "",
+      "Description": "Инженер II категории",
+      "SysName": "A142D8F4_03AF_46CE_BA22_33D74EEE7E51"
+    }
+  }
+]
 ```
 
 Ошибки:
