@@ -1,0 +1,618 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TDMSAPI</name>
+    </assembly>
+    <members>
+        <member name="M:TDMSAPI.Functions.SendTDMSMessage(Tdms.Api.TDMSApplication,System.String,System.String,Tdms.Api.TDMSUser)">
+            SEND TDMS MESSAGE 
+        </member>
+        <member name="M:TDMSAPI.Functions.Translito(System.String)">
+            TRANSLIT FUNCTION ENG -> RUS 
+        </member>
+        <member name="T:TDMSAPI.JRequest">
+            <summary>
+            Тело запроса
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.Mode">
+            <summary>
+            Вызываемый метод API
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TObject">
+            <summary>
+            Иллюстрирует информационный объект TDMS. С его помощью передаются свойства, атрибуты, версии и состояния последнего. Также используется в ответах на запросы
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TObjects">
+            <summary>
+            Коллекция объектов TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TUsers">
+            <summary>
+            Коллекция пользователей TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TConditions">
+            <summary>
+            Коллекция условия в выборке
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TUser">
+            <summary>
+            Описание пользователя TDMS как сущности
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.TFlag">
+            <summary>
+            Флаг использумый как параметр в методах
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.Submode">
+            <summary>
+            Задает имя пользовательского метода в конфигурации, который необходимо выпонить.
+            Если имя метода содержит точку, то точка должна быть строго одна (и не должна стоять в начале или в конце строки). Имя слева от точки трактуется как имя произвольного класса доступного в сборке, реализующей контроллер на базе TDMSCPIController, а имя справа от точки трактуася как имя публичного метода этого класса.
+            Если имя метода не содержит точки, оно трактуется как имя метода непосредственно в классе контроллера (основанного на TDMSCPIController).
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.Parameters">
+            <summary>
+            Задает именованные параметры submode
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JRequest.APIEventFilters">
+            <summary>
+            Задает фильтры для получения специальных событий
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:TDMSAPI.JRequest.Locktypes" -->
+        <!-- Badly formed XML comment ignored for member "P:TDMSAPI.JRequest.Roles" -->
+        <!-- Badly formed XML comment ignored for member "P:TDMSAPI.JRequest.Sheet" -->
+        <member name="T:TDMSAPI.JSheetRow">
+            <summary>
+            Строка выборки sheet
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JRole">
+            <summary>
+            Информация о блокировке объекта
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JPermission">
+            <summary>
+            Описание права на объекте по отношению к пользователю
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.Lockstatus">
+            <summary>
+            Информация о блокировке объекта
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JCondition">
+            <summary>
+            Условие поиска в выборке
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JCondition.Type">
+            <summary>
+            Тип условия поиска
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JCondition.SysName">
+            <summary>
+            Системное имя для атрибута, статуса, роли и тд
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JCondition.Value">
+            <summary>
+            Значение
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JObject">
+            <summary>
+            Объект TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.GUID">
+            <summary>
+            Глобально уникальный идентификатор объекта (GUID)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.ObjectGuid">
+            <summary>
+            Единый guid на все версии одного объекта. В случае классической версионности он совпадает с GUID для активной версии. В случае новой версионности он совпадает с первой версией
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.ObjectDefName">
+            <summary>
+            Системное имя типа данного объекта (шаблона).
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.Description">
+            <summary>
+            Описание объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.Parent">
+            <summary>
+            Родительский объект - объект, в составе которого создан данный.
+            Объект может не иметь родительский объект
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.StatusName">
+            <summary>
+            Системное имя текущего статуса
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.ModifyTime">
+            <summary>
+            Дата и время последнего изменения объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.ModifyUser">
+            <summary>
+            Пользователь, который последним редактировал объект
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.ActiveVersion">
+            <summary>
+            Флаг "Активная версия": является данный объект последней версией или одной из сохраненных (устаревших)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.VersionDescription">
+            <summary>
+            Описание версии объекта. Является она активной или нет, можно проверить с помощью
+            свойства ActiveVersion.
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.VersionName">
+            <summary>
+             Имя версии объекта. Является она активной или нет, можно проверить с помощью
+             свойства ActiveVersion.
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.VersionCreateTime">
+            <summary>
+            Дата и время создания версии
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.VersionCreateUser">
+            <summary>
+            Пользователь, создавший версию
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.TAttributes">
+            <summary>
+            Коллекция атрибутов
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.TVersions">
+            <summary>
+            Коллекция версий объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.TContent">
+            <summary>
+            Состав объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObject.TFiles">
+            <summary>
+            Коллекция файлов объекта
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JObjects">
+            <summary>
+            Коллекция объектов
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JContent">
+            <summary>
+            Коллекция коротких объектов
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JShortObject">
+            <summary>
+            Короткий объект
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.Description">
+            <summary>
+            Описание объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.GUID">
+            <summary>
+            Идентификатор объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.ObjectDefName">
+            <summary>
+            Тип объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.ActiveVersion">
+            <summary>
+            Флаг "Активная версия": является данный объект последней версией или одной из сохраненных (устаревших)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.StatusName">
+            <summary>
+            Системное имя текущего статуса
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JShortObject.Primary">
+            <summary>
+            Системное свойство объекта обозначающее главную связь родителя и дочернего объекта. Может быть только одна в паре родитель-дочерний объект
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JObjectDef">
+            <summary>
+            Тип объекта TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObjectDef.FileDefs">
+            <summary>
+             Типы файлов, разрешенные к добавлению к объектам этого типа
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JObjectDef.Statuses">
+            <summary>
+             Коллекция возможных статусов объектов данного типа
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JStatus">
+            <summary>
+            Статус объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JStatus.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JStatus.SysName">
+            <summary>
+            Системное имя статуса
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JFile">
+            <summary>
+            Описание файла
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JFileDef">
+            <summary>
+            Тип файла TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JFileDef.Description">
+            <summary>
+            Описание типа файла
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JFileDef.Sysname">
+            <summary>
+            Описание типа файла
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JFileDef.Extensions">
+            <summary>
+            Возможные расширения файлов данного типа
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JAttribute">
+            <summary>
+            Атрибут объекта TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAttribute.SysName">
+            <summary>
+            Системное имя атрибута
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAttribute.Value">
+            <summary>
+            Значение атрибута
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAttribute.Type">
+            <summary>
+            Тип атрибута
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAttribute.TTableRows">
+            <summary>
+            Коллекция строк табличного атрибута
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JTableRow">
+            <summary>
+            Строка табличного атрибута
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JTableRow.TAttributes">
+            <summary>
+            Коллекция атриьутов
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JVersion">
+            <summary>
+            Версия объекта TDMS
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JVersion.VersionDescription">
+            <summary>
+             Описание версии объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JVersion.VersionName">
+            <summary>
+             Имя версии объекта
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JVersion.GUID">
+            <summary>
+            Идентификатор версии. При условии, что на типе объекта включено свойство "Ссылки указывают на версию". В этом случае у всех версий существует уникальный для каждой версии GUID наряду с общим GUID
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JVersion.VersionCreateTime">
+            <summary>
+            Дата создания версии
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JUser">
+            <summary>
+            Пользователь TDMS
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JGroup">
+            <summary>
+            Информация о группе
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JClassifier">
+            <summary>
+            Классификатор TDMS
+            </summary>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Mastermethod(TDMSAPI.JRequest)">
+            MASTER METHOD POST 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.AddFiles(Microsoft.AspNetCore.Http.IFormCollection)">
+            FILE 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobject">
+            <summary>
+            Получение информации об объекте TDMS по GUID
+            </summary>
+            <returns>Возвращаются свойства, атрибуты, описание файлового состава объекта</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectactiveversion">
+            <summary>
+            Получение информации об объекте TDMS по GUID
+            </summary>
+            <returns>Возвращаются свойства, атрибуты, описание файлового состава объекта</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Createobject">
+            CREATE NEW TDMS OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Editobject">
+            EDIT TDMS OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Editobjects">
+            <summary>
+            Массовое редактирование массива объектов
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Deleteobject">
+            DELETE OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectuplinks">
+            GET OBJECT'S REFERENCED BY CURRENT OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getreferencedby">
+            GET OBJECT'S REFERENCED BY CURRENT OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectdef">
+            GET TDMS OBJECTDEF 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getversionbydescription">
+            GET TDMS OBJECT VERSION BY VERSIONDESCRIPTION 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Findobjects">
+            <summary>
+            Поиск TDMS объектов по типу объекта и значениям атрибутов
+            </summary>
+            <returns>Коллекция объектов TShortObject, соотвутствующих кретериям поиска</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectcontent">
+            GET OBJECT'S CONTENT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectcontentall">
+            GET OBJECT'S FULL CONTENT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Createversion">
+            CERATE NEW VERSION 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Deletefiles">
+            DELETE FILES 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Createlink">
+            <summary>
+            Добавить ссылку на объект в состав другого объекта
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Moveobject">
+            <summary>
+            Премещение объекта в состав нового родителя
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Lockobject">
+            <summary>
+            Блокировка объекта
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Unlockobject">
+            <summary>
+            Разблокировка объект
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Geturlobject">
+            <summary>
+            Получить URL на объект
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectfiles">
+            <summary>
+            Получить файлы объекта
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectroles">
+            <summary>
+            Получить роли пользователя на объекте
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectpermissions">
+            <summary>
+            Информация о правах доступа пользователя на объекте
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getobjectlockstatus">
+            <summary>
+            Получить URL на объект
+            </summary>
+            <returns>OK</returns>
+        </member>
+        <member name="T:TDMSAPI.TDMSAPIController.GetServerURL">
+            <summary>
+            Команда запроса собственного адреса сервера
+            </summary>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Createuser">
+            CREATE NEW TDMS USER 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Findusers">
+            <summary>
+            Deprecated method.Use 'Getusers' instead
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getuser">
+            GET TDMS USER 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getcurrentuser">
+            GET CURRENT TDMS USER 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.WrapObject_old(System.String)">
+            Wrap TDMS OBJECT 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.WrapAttribute(Tdms.Api.TDMSAttribute)">
+            WRAP TDMS ATTRIBUTE 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.WrapObjectDef(System.String)">
+            WRAP TDMS OBJECTDEF 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.WrapUser_old(System.String)">
+            WRAP USER 
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Test(TDMSAPI.JRequest)">
+            TEST METHOD 
+        </member>
+        <member name="F:TDMSAPI.TDMSAPIController.TypeAliases">
+            <summary>
+            Словарь для разбора имени типа для параметра
+            </summary>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Executefunc">
+            <summary>
+            Выполнить специальную функцию, определенную в конфигурации (на vbs) или в специальном расширении сервера.
+            Функция должна быть помечена в скрипте как «extern». Директивы extern из скриптов подключенных через директиву use не обрабатываются.
+            Возвращаемое функцией значение должно быть примитивным типом, строкой, датой или массивом таковых.
+            Запускается функция с правами авторизовавшегося пользователя, но внутри функции возможно повышение привилегий (через SysadminPermissions или SysadminModeOn).
+            Исключения, возникающие при вызове, генерируют ошибку HTTP 400.
+            </summary>
+            <returns>Результат выполнения данной функции в строковом представлении. Массивы заключаются в квадратные скобки с перечислением элементов через запятую. Строки и даты заключаются в кавычки.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:TDMSAPI.TDMSAPIController.Getapievents" -->
+        <member name="T:TDMSAPI.JParam">
+            <summary>
+            Представляет параметр функции submode
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JParam.Name">
+            <summary>
+            Имя параметра в соответствии с декларацией метода
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JParam.Type">
+            <summary>
+            Тип параметра, в который должна быть произведена конвертация перед вызовом метода.
+            Указывается только в том случае, если декларация метода не содержит явного указания типа (например в vbs).
+            Если тип не указан ни в декларации метода ни в этом поле, подразумевается тип string.
+            В качестве значения допускается указывать встроенный тип С#, для которого в платформе .NET определен конвертер из строкового типа.
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JParam.Value">
+            <summary>
+            Строковое представление значения параметра (корректно конвертируемое в указанный type)
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JAPIEventFilter">
+            <summary>
+            Представляет параметры фильтра специальных событий
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEventFilter.From">
+            <summary>
+            Возвращать события начиная с этой временной точки (включая её) (UTC)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEventFilter.Before">
+            <summary>
+            Возвращать события начиная до этой временной точки (не включая её) (UTC)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEventFilter.Type">
+            <summary>
+            Возвращать события данного типа
+            </summary>
+        </member>
+        <member name="T:TDMSAPI.JAPIEvent">
+            <summary>
+            Представляет запись о специальном событии API
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEvent.Time">
+            <summary>
+            Время наступления события (UTC)
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEvent.Type">
+            <summary>
+            Идентификатор типа специального события
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEvent.Message">
+            <summary>
+            Строка сообщения, прикремленная к событию
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAPIEvent.TObject">
+            <summary>
+            Объект TDMS прикрепленный к событию
+            </summary>
+        </member>
+    </members>
+</doc>
