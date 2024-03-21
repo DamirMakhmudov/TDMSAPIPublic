@@ -390,6 +390,12 @@
             </summary>
             <returns>Возвращаются свойства, атрибуты, описание файлового состава объекта</returns>
         </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getquerysheet">
+            <summary>
+            Получение результатов выполнения выборки по заданым параметрам
+            </summary>
+            <returns>Возвращает массив объектов, описывающих результат выполнения выборки</returns>
+        </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getobjectactiveversion">
             <summary>
             Получение информации об объекте TDMS по GUID
