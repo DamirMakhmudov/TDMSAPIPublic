@@ -99,9 +99,7 @@ Authorization: base64_encode(login:password)
 Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 ```
 В ответе будет получен `grant` авторизации в формате `json`:
-```
-Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
-```
+
 >ВАЖНО: при перезагрузке приложения TDMS Application Server выданные токены становятся недействительными
 
 #### Response
@@ -116,6 +114,11 @@ Authorization: Basic bGFiYWtzaGluYToxMjNxd2U=
 }
 ```
 
+При формировании запросв необходимо полученный `access_token` поместить в заголовок
+
+```
+Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwidHlwIjoiSldUIn0..S9Sk0vs6lEzQzBQe1X2Icg.2vJCY_AlcPlh2fd17uLjUihTywOCcsyfOtrDTZvxQNlsgRCWq0gMbciuq8Ysx9WsILK4ag5ujBKK23lXAgfensKgjKqDNC545NPqiCufrfq-CdJOWxa953jg7pv93j8rTai0Wo3w4QglwJmcUjRKyML-x7O_YYKmMiQxmBtFRs_kqf6qZYTx27zh6EzfoljzIkplS8xRrpZbluKf0r8qx3F59Mm-O2VKkaXdPRI3WSjJOMgv4v5AX3TKwfGYeXqMnZ1K1KgK4lx1QfAVXkcxkEMN1NpblUnq0OexZhRVi5a3zhdWSj-y2pv5WlEIhbp9fdt1dxHYAOK7gJumEusLCoz42Un3021gBdhk7a5NvLBSeFetj2LmrxDDUx4u39gQ14aEVrqipftRNQKzq6zmcBF00WoYkiAgdpaO57fWAlKlAKkzNimNcUt2KRJWVekjo2O1jtSETZWdLcKJqkJLyFHuUxmCukYxQG8bjfTj3KI4AyE9k-GM-l8YYLjDglA-Fu3x8KvL0wZwG-KHw_9W30imKJ653z5KbbB8XZ7wmJ6Q8USegUk8wtpyYh5UFQXdsF8on6VXbt4oq3jSPS7zpKn27A9gDbnSSPbqV-p7lic_ze-JdacTkUMCnpE4MVbWUDuZ2OC-3RPkdY7sh_PZWA.5rYDn1c9hVtw5dYYFPmTdySjXxKJ9KlCepQ899fHDaE
+```
 ### Доменная авторизация
 
 Для получения `access_token` необходимо отправить запрос на endpoint `/token` с параметром `?authType=WIN`

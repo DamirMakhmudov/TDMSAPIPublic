@@ -379,10 +379,18 @@
             </summary>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Mastermethod(TDMSAPI.JRequest)">
-            MASTER METHOD POST 
+            <summary>
+            Основная точка входа для запроса к API
+            </summary>
+            <param name="requestobject"></param>
+            <returns></returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.AddFiles(Microsoft.AspNetCore.Http.IFormCollection)">
-            FILE 
+            <summary>
+            Точка входа запроса для добавления файлов
+            </summary>
+            <param name="IForms"></param>
+            <returns></returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getobject">
             <summary>
@@ -506,32 +514,55 @@
             Команда запроса собственного адреса сервера
             </summary>
         </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Createusers">
+            <summary>
+            Массовое создание пользователей TDMS
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:TDMSAPI.TDMSAPIController.Createuser">
-            CREATE NEW TDMS USER 
+            <summary>
+            Устарешвний метод. Рекомендуется использовать 'Createusers'. Создание нового пользователя TDMS
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Findusers">
             <summary>
-            Deprecated method.Use 'Getusers' instead
+            Устаревший метод получения списка пользователей. Рекомендуется использовать 'GetUsers'
             </summary>
             <returns></returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getuser">
-            GET TDMS USER 
+            <summary>
+            Устаревший метолд получения данных заданного пользователя. Рекомендуется использовать метод GetUsers
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getusers">
+            <summary>
+            Получение списка пользователей TDMS по заданным критериям
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Editusers">
+            <summary>
+            Массовое редактирвоание пользователей TDMS
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TDMSAPI.TDMSAPIController.UpdateUser(Tdms.Api.TDMSUser,TDMSAPI.JUser)">
+            <summary>
+            Приватная функция редактирования пользователя TDMS
+            </summary>
+            <param name="user"></param>
+            <param name="tUser"></param>
+            <returns>true</returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getcurrentuser">
-            GET CURRENT TDMS USER 
-        </member>
-        <member name="M:TDMSAPI.TDMSAPIController.WrapObject_old(System.String)">
-            Wrap TDMS OBJECT 
-        </member>
-        <member name="M:TDMSAPI.TDMSAPIController.WrapAttribute(Tdms.Api.TDMSAttribute)">
-            WRAP TDMS ATTRIBUTE 
-        </member>
-        <member name="M:TDMSAPI.TDMSAPIController.WrapObjectDef(System.String)">
-            WRAP TDMS OBJECTDEF 
-        </member>
-        <member name="M:TDMSAPI.TDMSAPIController.WrapUser_old(System.String)">
-            WRAP USER 
+            <summary>
+            Поулчение данных текущего пользователя, выполняющего запрос
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Test(TDMSAPI.JRequest)">
             TEST METHOD 
