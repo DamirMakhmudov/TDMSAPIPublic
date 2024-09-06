@@ -398,6 +398,12 @@
             </summary>
             <returns>Возвращаются свойства, атрибуты, описание файлового состава объекта</returns>
         </member>
+        <member name="M:TDMSAPI.TDMSAPIController.Getgroups">
+            <summary>
+            Получение списка групп пользователей
+            </summary>
+            <returns>Возвращаются свойства, атрибуты, описание файлового состава объекта</returns>
+        </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getquerysheet">
             <summary>
             Получение результатов выполнения выборки по заданым параметрам
