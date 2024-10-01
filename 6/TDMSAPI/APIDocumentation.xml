@@ -566,7 +566,7 @@
         </member>
         <member name="M:TDMSAPI.TDMSAPIController.Getcurrentuser">
             <summary>
-            Поулчение данных текущего пользователя, выполняющего запрос
+            Получение данных текущего пользователя, выполняющего запрос
             </summary>
             <returns></returns>
         </member>
