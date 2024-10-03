@@ -1729,7 +1729,7 @@ Content-Type: application/json
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Getquerysheet `POST`
-Получение результатов статичной выборки с параметрами [Parameters](#Parameters) в виде списка таблицы
+Получение результатов статичной выборки с параметрами [Parameters](#Parameters) в виде таблицы, возвращаемой выборкой
 
 #### Request:
 ```json
