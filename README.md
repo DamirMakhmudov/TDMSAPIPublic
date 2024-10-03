@@ -1729,24 +1729,22 @@ Content-Type: application/json
 |404 NotFound  |В системе не найден объект с GUID = '{GUID}'
 
 ### Getquerysheet `POST`
-Получение результатов статичной выборки с параметрами [Parameters](#Parameters)
+Получение результатов статичной выборки с параметрами [Parameters](#Parameters) в виде списка таблицы
 
 #### Request:
-
 ```json
 {
     "mode": "Getquerysheet",
+    "submode": "Q_1",
     "Parameters": [
         {
-            "Name": "stage",
-            "Value": "N_STAGE_W"
-        }
-        ,
+            "Name": "objDefName",
+            "Value": "O_Volume"
+        },
         {
-            "Name": "gip",
-            "Value": "U_X_5E3CA89A-5B99-11E5-9C92-5254005756B4"
+            "Name": "refCompelx",
+            "Value": "{A6A3A016-F2EE-46C9-BC77-5070E8B52185}"
         }
-        
     ]
 }
 ```
@@ -1756,6 +1754,7 @@ Content-Type: application/json
 |Parameter  |Type                     |Description
 |-          |-                        |-               
 |Mode       |string                   |Вызываемый метод API
+|submode    |string                   |Идентификатор вызываемой выборки
 |Parameters |[Parameters](#Parameters)|Объект TDMS
 |Param.Name |string                   |Ключ представляет собой наименование колонки в результирующей таблице выборки
 |Param.Value|string                   |Значение ячейки результирующей таблицы выборки
@@ -1794,6 +1793,234 @@ Content-Type: application/json
         "Код проекта": "0203.009"
     }
 ]
+```
+
+Ошибки:
+
+|Error code    |Description
+|-             |-
+|400 BadRequest|Any error
+|404 NotFound  |Убедитесь, что параметр 'mode' задан и он не пустой
+|404 NotFound  |Указанный метод в параметре 'mode' не найден
+|404 NotFound  |В запросе не найден параметр {параметр}
+
+### Getqueryobjects `POST`
+Получение результатов статичной выборки с параметрами [Parameters](#Parameters) в виде списка объектов TDMS
+
+#### Request:
+
+```json
+{
+    "mode": "Getqueryobjects",
+    "submode": "Q_1",
+    "tflag": false,
+    "Parameters": [
+        {
+            "Name": "objDefName",
+            "Value": "O_Volume"
+        },
+        {
+            "Name": "refCompelx",
+            "Value": "{A6A3A016-F2EE-46C9-BC77-5070E8B52185}"
+        }
+    ]
+}
+```
+
+Обязательные параметры:
+
+|Parameter  |Type                     |Description
+|-          |-                        |-               
+|Mode       |string                   |Вызываемый метод API
+|submode    |string                   |Идентификатор вызываемой выборки
+|TFlag      |boolean                  |Ключ определяющий подробный или сжатый формат результата
+|Parameters |[Parameters](#Parameters)|Объект TDMS
+|Param.Name |string                   |Ключ представляет собой наименование колонки в результирующей таблице выборки
+|Param.Value|string                   |Значение ячейки результирующей таблицы выборки
+
+#### Response
+
+```
+Status: 200
+Content-Type: application/json
+```
+
+```json
+[
+    {
+        "GUID": "{F98C1C1E-C39A-4C64-9EA7-87203FB2AF26}",
+        "ObjectGuid": "{F98C1C1E-C39A-4C64-9EA7-87203FB2AF26}",
+        "ObjectDefName": "O_Folder_Doc",
+        "Description": "КСГ",
+        "Parent": "{E6237962-1447-4524-ACBB-01A58502C780}",
+        "StatusName": "S_Created",
+        "ModifyTime": "25.05.2023 11:15:13",
+        "ModifyUser": {
+            "SysName": "USER_AdminGPP_SPb",
+            "Description": "Администратор СПб",
+            "FirstName": "Санкт-Питербург",
+            "LastName": "Администратор",
+            "MiddleName": "",
+            "Login": "AdminGPP_SPb",
+            "Password": null,
+            "Phone": "",
+            "Mail": null,
+            "Position": null,
+            "DepartmentClassifier": {
+                "Code": "0001.009",
+                "Description": "Служба бухгалтерского учета и отчетности",
+                "SysName": "N_X_104E1346-437C-11E6-4A88-001A4A160153"
+            },
+            "PositionClassifier": null
+        },
+        "ActiveVersion": true,
+        "VersionDescription": "Начальная версия",
+        "VersionName": "1",
+        "VersionCreateTime": "02.02.2022 8:14:36",
+        "VersionCreateUser": {
+            "SysName": "USER_GMV",
+            "Description": "Гуляев Максим Вячеславович",
+            "FirstName": "Максим",
+            "LastName": "Гуляев",
+            "MiddleName": "Вячеславович",
+            "Login": "gmv",
+            "Password": null,
+            "Phone": "",
+            "Mail": null,
+            "Position": null,
+            "DepartmentClassifier": null,
+            "PositionClassifier": null
+        },
+        "TAttributes": [
+            {
+                "SysName": "A_Str_Name",
+                "Value": "КСГ",
+                "Type": "tdmString",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Str_Note",
+                "Value": "",
+                "Type": "tdmString",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Complex",
+                "Value": "{2B1C6ED4-17B0-4553-8756-B631F640BB9A}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Parent",
+                "Value": "{E6237962-1447-4524-ACBB-01A58502C780}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Cls_TypeFolder",
+                "Value": "N_TYPE_FOLDER_PRODUCT_KSG",
+                "Type": "tdmClassifier",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Project",
+                "Value": "{E6237962-1447-4524-ACBB-01A58502C780}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            }
+        ],
+        "TVersions": [
+            {
+                "VersionDescription": "Начальная версия",
+                "VersionName": "1",
+                "GUID": "{F98C1C1E-C39A-4C64-9EA7-87203FB2AF26}"
+            }
+        ],
+        "TContent": null,
+        "TFiles": null
+    },
+    {
+        "GUID": "{18AAC5A8-1BE5-4A34-9FC2-4BEBE24A5D61}",
+        "ObjectGuid": "{18AAC5A8-1BE5-4A34-9FC2-4BEBE24A5D61}",
+        "ObjectDefName": "O_Folder_Doc",
+        "Description": "Дело проекта",
+        "Parent": "{E6237962-1447-4524-ACBB-01A58502C780}",
+        "StatusName": "S_Created",
+        "ModifyTime": "25.05.2023 11:15:13",
+        "ModifyUser": {
+            "SysName": "USER_AdminGPP_SPb",
+            "Description": "Администратор СПб",
+            "FirstName": "Санкт-Питербург",
+            "LastName": "Администратор",
+            "MiddleName": "",
+            "Login": "AdminGPP_SPb",
+            "Password": null,
+            "Phone": "",
+            "Mail": null,
+            "Position": null,
+            "DepartmentClassifier": {
+                "Code": "0001.009",
+                "Description": "Служба бухгалтерского учета и отчетности",
+                "SysName": "N_X_104E1346-437C-11E6-4A88-001A4A160153"
+            },
+            "PositionClassifier": null
+        },
+        "ActiveVersion": true,
+        "VersionDescription": "Начальная версия",
+        "VersionName": "1",
+        "VersionCreateTime": "02.02.2022 8:14:36",
+        "VersionCreateUser": {
+            "SysName": "USER_GMV",
+            "Description": "Гуляев Максим Вячеславович",
+            "FirstName": "Максим",
+            "LastName": "Гуляев",
+            "MiddleName": "Вячеславович",
+            "Login": "gmv",
+            "Password": null,
+            "Phone": "",
+            "Mail": null,
+            "Position": null,
+            "DepartmentClassifier": null,
+            "PositionClassifier": null
+        },
+        "TAttributes": [
+            {
+                "SysName": "A_Str_Name",
+                "Value": "Дело проекта",
+                "Type": "tdmString",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Str_Note",
+                "Value": "",
+                "Type": "tdmString",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Complex",
+                "Value": "{2B1C6ED4-17B0-4553-8756-B631F640BB9A}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Parent",
+                "Value": "{E6237962-1447-4524-ACBB-01A58502C780}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Cls_TypeFolder",
+                "Value": "N_TYPE_FOLDER_PRODUCT_ProjectCase",
+                "Type": "tdmClassifier",
+                "TTableRows": null
+            },
+            {
+                "SysName": "A_Ref_Project",
+                "Value": "{E6237962-1447-4524-ACBB-01A58502C780}",
+                "Type": "tdmObjectLink",
+                "TTableRows": null
+            }
+        ],
 ```
 
 Ошибки:
