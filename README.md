@@ -1,8 +1,10 @@
 ﻿# Документация REST API TDMS
 Документация REST  API для конфигураций, разработанных на базе [TDMS](https://tdms.ru) (Technical Data Management System) с использованная в приложении TDMS Application Server. 
-Текущая поддерживаемые версии  
-[`6.1.241.0`](https://ftp.csoft.ru/file_14367174086745c4f98a085)  
-[`7.0.116`](https://ftp.csoft.ru/file_151873764678f698b5d3bc)
+Текущая поддерживаемые версии:
+
+[`TDMS Server 6.1.250`](https://ftp.csoft.ru/file_703226108688b41791e3ed) [`TDMS Rest API`](https://ftp.csoft.ru/file_1007897646688b4e5d7d2e7)
+
+[`TDMS Server 7.0.116`](https://ftp.csoft.ru/file_151873764678f698b5d3bc)
 
 ## Содержание
 - [Развертывание](#Развертывание)
@@ -44,7 +46,7 @@
   - [Информация о ролях на объекте](#Getobjectroles-post)
   - [Информация о файловом составе объекта](#Getobjectfiles-post)
   - [Получение файлов объекта](#Getobjectfilescontent-post)
-  - [Отправка файлов в объект](#Addfiles-post)
+  - [Загрузка файлов в объект](#Addfiles-post)
   - [Получение статуса блокировки](#Getobjectlockstatus-post)
   - [Получение пользователя](#Getuser-post)
   - [Получение текущего пользователя](#Getcurrentuser-post)
@@ -3568,24 +3570,31 @@ Content-Type: application/octet-stream
 Ниже представлен пример отправки запроса из Postman:
 ![download repository!](./assets/003.png)
 
-Запрос отправляется в формате `form-data`. В ключе с именем `json` и типом `Text` необходимо поместить схему запроса в формате `json`. В остальные ключи с типом `File` (не `Text`) помещаются сами файлы
+Запрос отправляется в формате `form-data`. В ключе с именем `json` и типом `Text` необходимо поместить схему запроса в формате `json`. В остальные ключи с типом `File` (не `Text`) помещаются сами файлы. Опционально можно указать тип файла TDMSFildeDef только для требуемых файлов, как в примере ниже. В случае, если тип файла не указан он будет выбран на основании расширения файла. Таким образов ключ `TFiles` необязателен
 
 ```json
+
 {
-    "mode": "Addfiles",
     "TObject": {
-        "GUID": "{5E9FD474-EF02-4D56-B3E9-37751DD056DE}"
+        "GUID": "{E1EA6234-1E3B-4814-BA48-75F23933B7E3}",
+        "TFiles": [
+            {
+            "FileDefName": "FILE_XLS",
+            "FileName": "Смета.xlsx"
+            }
+        ]
     }
-}    
+} 
 ```
 
 Параметры:
 
 |Parameter     |Required|Type               |Description
-|-             |-       |-                  |-               
-|Mode          |true    |string             |Вызываемый метод API
-|TObject       |true    |[TObject](#TObject)|Объект TDMS
-|TObject.GUID  |true    |string             |Идентификатор объекта TDMS
+|-             |-             |-                  |-               
+|Mode          |true          |string             |Вызываемый метод API
+|TObject       |true          |[TObject](#TObject)|Объект TDMS
+|TObject.GUID  |true          |string             |Идентификатор объекта TDMS
+|TObject.TFiles|false         |[[TFile](#TFile)]  |Коллеция файлов с наименованиями и типами
 
 #### Response
 

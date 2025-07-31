@@ -385,10 +385,12 @@
             <param name="requestobject"></param>
             <returns></returns>
         </member>
-        <member name="M:TDMSAPI.TDMSAPIController.AddFiles(Microsoft.AspNetCore.Http.IFormCollection)">
+        <member name="M:TDMSAPI.TDMSAPIController.AddFiles(System.String,System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
             <summary>
             Точка входа запроса для добавления файлов
             </summary>
+            <param name="json"></param>
+            <param name="files"></param>
             <param name="IForms"></param>
             <returns></returns>
         </member>
