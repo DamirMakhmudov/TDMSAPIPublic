@@ -233,6 +233,11 @@
             Тип объекта
             </summary>
         </member>
+        <member name="P:TDMSAPI.JShortObject.Parent">
+            <summary>
+            Родитель объекта
+            </summary>
+        </member>
         <member name="P:TDMSAPI.JShortObject.ActiveVersion">
             <summary>
             Флаг "Активная версия": является данный объект последней версией или одной из сохраненных (устаревших)
@@ -318,9 +323,19 @@
             Значение атрибута
             </summary>
         </member>
+        <member name="P:TDMSAPI.JAttribute.ValueDescription">
+            <summary>
+            Описание значения атрибута для классификаторов, пользователей и объектов
+            </summary>
+        </member>
         <member name="P:TDMSAPI.JAttribute.Type">
             <summary>
             Тип атрибута
+            </summary>
+        </member>
+        <member name="P:TDMSAPI.JAttribute.Description">
+            <summary>
+            Описание атрибута
             </summary>
         </member>
         <member name="P:TDMSAPI.JAttribute.TTableRows">
